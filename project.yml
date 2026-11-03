@@ -1,0 +1,40 @@
+name: LML
+options:
+  bundleIdPrefix: au.com.livemusiclocator
+  deploymentTarget:
+    iOS: "18.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    DEVELOPMENT_TEAM: ""
+targets:
+  LML:
+    type: application
+    platform: iOS
+    sources: [LML]
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: au.com.livemusiclocator.app
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_CFBundleDisplayName: Live Music Locator
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UIUserInterfaceStyle: Dark
+  LMLTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources: [LMLTests]
+    dependencies:
+      - target: LML
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+schemes:
+  LML:
+    build:
+      targets:
+        LML: all
+        LMLTests: [test]
+    test:
+      targets: [LMLTests]

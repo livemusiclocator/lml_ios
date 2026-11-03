@@ -1,0 +1,202 @@
+[
+ {
+  "id": "8f0cb6d6-0db7-4ce8-bd6f-98130daf8672",
+  "name": "DJ JULIUS MYLES",
+  "date": "2026-11-03",
+  "ticketing_url": "",
+  "start_time": "10:30",
+  "start_timestamp": "2026-11-03T10:30:00.000+11:00",
+  "duration": 990,
+  "finish_time": "03:00",
+  "finish_timestamp": "2026-11-04T03:00:00.000+11:00",
+  "description": null,
+  "status": "confirmed",
+  "ticket_status": null,
+  "series": "",
+  "category": null,
+  "information_tags": [
+   "18+"
+  ],
+  "genre_tags": [
+   "DJ"
+  ],
+  "venue": {
+   "id": "d4aeb9fa-a50a-4fb3-b7cd-b312ede051a1",
+   "name": "The Old Bar",
+   "address": "74-76 Johnston Street Fitzroy",
+   "capacity": 175,
+   "website": "http://www.theoldbar.com.au/",
+   "postcode": "3065",
+   "vibe": null,
+   "tags": [],
+   "location_url": "https://maps.app.goo.gl/vzfwUkw6xDWMs6nd6",
+   "latitude": -37.798362,
+   "longitude": 144.977083
+  },
+  "sets": [],
+  "prices": []
+ },
+ {
+  "id": "b7914b12-511d-4894-8837-db81bd3ea20a",
+  "name": "Michael Zammit - Greatest Hits of the 70s Show",
+  "date": "2026-11-03",
+  "ticketing_url": "https://www.hopperssports.com.au/whatson",
+  "start_time": "11:00",
+  "start_timestamp": "2026-11-03T11:00:00.000+11:00",
+  "duration": null,
+  "finish_time": null,
+  "finish_timestamp": null,
+  "description": "",
+  "status": "confirmed",
+  "ticket_status": null,
+  "series": null,
+  "category": null,
+  "information_tags": [],
+  "genre_tags": [
+   "Pop",
+   "Rock",
+   "70's"
+  ],
+  "venue": {
+   "id": "00e52db1-2653-4570-bc02-4ef4dfe21ecc",
+   "name": "Hoppers Crossing Sports Club",
+   "address": "Hogans Reserve 56-84 Hogans Road, Hoppers Crossing VIC 3030",
+   "capacity": null,
+   "website": "https://www.hopperssports.com.au/whatson",
+   "postcode": "3030",
+   "vibe": null,
+   "tags": [],
+   "location_url": "https://maps.app.goo.gl/WME3rBTQ3hHyta9S6",
+   "latitude": -37.863183,
+   "longitude": 144.694169
+  },
+  "sets": [
+   {
+    "start_time": "22:48",
+    "start_timestamp": "2026-11-03T22:47:59.999+11:00",
+    "duration": null,
+    "finish_time": null,
+    "finish_timestamp": null,
+    "act": {
+     "id": "b0dc31b0-3c93-4839-ba83-a60824d0b436",
+     "name": "Michael Zammit",
+     "genres": null
+    }
+   }
+  ],
+  "prices": [
+   {
+    "amount": "$30.00",
+    "description": "Non-members"
+   },
+   {
+    "amount": "$20.00",
+    "description": "Members"
+   }
+  ]
+ },
+ {
+  "id": "12b825b1-ca9d-4e3a-9b9a-f51901176c83",
+  "name": "Cup Day Blowout",
+  "date": "2026-11-03",
+  "ticketing_url": "https://theworkersclub.oztix.com.au/outlet/event/9232dd9a-e0e0-47b7-97e4-20444e077fdb?utm_source=TheWorkersClub&utm_medium=Website",
+  "start_time": "13:00",
+  "start_timestamp": "2026-11-03T13:00:00.000+11:00",
+  "duration": null,
+  "finish_time": null,
+  "finish_timestamp": null,
+  "description": null,
+  "status": "confirmed",
+  "ticket_status": null,
+  "series": "",
+  "category": null,
+  "information_tags": [
+   "18+"
+  ],
+  "genre_tags": [
+   "Festival",
+   "Multi genre"
+  ],
+  "venue": {
+   "id": "e8154d55-0ed5-4842-bfc1-d129fcc8f282",
+   "name": "The Workers Club",
+   "address": "51 Brunswick Street Fitzroy",
+   "capacity": 340,
+   "website": "http://www.theworkersclub.com.au/",
+   "postcode": "3065",
+   "vibe": "",
+   "tags": [],
+   "location_url": "https://maps.app.goo.gl/b81RTfn2ZNPWugRz7",
+   "latitude": -37.805598,
+   "longitude": 144.977022
+  },
+  "sets": [
+   {
+    "start_time": null,
+    "start_timestamp": null,
+    "duration": null,
+    "finish_time": null,
+    "finish_timestamp": null,
+    "act": {
+     "id": "b37d0fe4-3f3e-49c8-81e0-babff902cff6",
+     "name": "Gareth Skinner",
+     "genres": null
+    }
+   },
+   {
+    "start_time": null,
+    "start_timestamp": null,
+    "duration": null,
+    "finish_time": null,
+    "finish_timestamp": null,
+    "act": {
+     "id": "c65aa98a-ccf8-43b5-b619-9805a09d31c7",
+     "name": "Liatris",
+     "genres": null
+    }
+   },
+   {
+    "start_time": null,
+    "start_timestamp": null,
+    "duration": null,
+    "finish_time": null,
+    "finish_timestamp": null,
+    "act": {
+     "id": "f2a521f5-d7ff-40a4-901f-18cee5152df4",
+     "name": "Moth",
+     "genres": null
+    }
+   },
+   {
+    "start_time": null,
+    "start_timestamp": null,
+    "duration": null,
+    "finish_time": null,
+    "finish_timestamp": null,
+    "act": {
+     "id": "8e0e077c-c77d-48f8-a457-636396dfd399",
+     "name": "Sloppy Jalopies",
+     "genres": null
+    }
+   },
+   {
+    "start_time": null,
+    "start_timestamp": null,
+    "duration": null,
+    "finish_time": null,
+    "finish_timestamp": null,
+    "act": {
+     "id": "a7a29726-6743-4160-b1bd-849e482a66fc",
+     "name": "Sanszu",
+     "genres": null
+    }
+   }
+  ],
+  "prices": [
+   {
+    "amount": "$28.60",
+    "description": "General Admission"
+   }
+  ]
+ }
+]

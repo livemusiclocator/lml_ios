@@ -1,0 +1,6 @@
+LML.xcodeproj/
+build/
+tmp/
+DerivedData/
+*.xcuserstate
+xcuserdata/
