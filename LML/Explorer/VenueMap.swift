@@ -9,7 +9,11 @@ struct VenueMap: UIViewRepresentable {
     let initialRegion: MKCoordinateRegion
     /// Bumped by the locate button; each new value jumps to the person.
     var locateRequest = 0
-    /// Called when the map comes to rest after a pan or zoom.
+    /// How far down the screen the map can be seen: the top of the gig sheet.
+    /// Pins below it are hidden, so they aren't in the visible region.
+    var visibleBottom: CGFloat?
+    /// The part of the map that can be seen, whenever it comes to rest after a
+    /// pan or zoom, or the sheet moves.
     var onRegionChange: (MKCoordinateRegion) -> Void = { _ in }
 
     func makeUIView(context: Context) -> MKMapView {
@@ -34,6 +38,10 @@ struct VenueMap: UIViewRepresentable {
         if locateRequest != context.coordinator.lastLocateRequest {
             context.coordinator.lastLocateRequest = locateRequest
             context.coordinator.locate(on: map)
+        }
+        if visibleBottom != context.coordinator.lastVisibleBottom {
+            context.coordinator.lastVisibleBottom = visibleBottom
+            context.coordinator.reportVisibleRegion(of: map)
         }
         syncAnnotations(on: map)
         syncSelection(on: map)
@@ -111,8 +119,20 @@ struct VenueMap: UIViewRepresentable {
             map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
         }
 
+        var lastVisibleBottom: CGFloat?
+
         func mapView(_ map: MKMapView, regionDidChangeAnimated animated: Bool) {
-            let region = map.region
+            reportVisibleRegion(of: map)
+        }
+
+        /// The map above the sheet. Nothing is reported when the sheet covers
+        /// (nearly) all of it: the list stays as it was until the map is back.
+        func reportVisibleRegion(of map: MKMapView) {
+            let bounds = map.bounds
+            let height = min(bounds.height, parent.visibleBottom ?? bounds.height)
+            guard bounds.width > 0, height > 80 else { return }
+            let region = map.convert(CGRect(x: 0, y: 0, width: bounds.width, height: height), toRegionFrom: map)
+            // not while SwiftUI is updating the view
             Task { @MainActor in self.parent.onRegionChange(region) }
         }
 

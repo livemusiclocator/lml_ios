@@ -1,6 +1,6 @@
 name = "Gig detail page like the JS front end"
 status = "done"
-owner = "claudia"
+owner = "mark"
 description = """
 Tapping a gig in the sheet should push a detail page modelled on lml_frontend_client/src/pages/GigDetails/GigDetails.jsx.
 
@@ -23,7 +23,7 @@ Tapping a gig in the sheet should push a detail page modelled on lml_frontend_cl
 ## Model work
 Gig only decodes what the explorer needs. The API payload already includes ticketing_url, start_timestamp, finish_timestamp, description, sets, prices and venue.capacity/website/location_url, so decode those too (the fixture in LMLTests/Fixtures/gigs.json has them) and extend GigDecodingTests. Check whether the JS app fetches a single gig from its own endpoint (useGig in src/hooks/api) or reuses the list data."""
 created_at = "2026-11-21T02:48:54.407973Z"
-updated_at = "2026-11-21T02:53:26.498843Z"
+updated_at = "2026-11-21T04:08:16.950631Z"
 tags = [
     "gig-detail",
     "ui",

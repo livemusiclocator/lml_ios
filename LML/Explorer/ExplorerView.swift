@@ -8,13 +8,16 @@ struct ExplorerView: View {
     @State private var model = ExplorerModel()
     @State private var detent: PresentationDetent = .fraction(0.4)
     @State private var locateRequest = 0
+    /// Where the top of the sheet is on screen.
+    @State private var sheetTop: CGFloat?
 
     var body: some View {
         VenueMap(
             venues: model.venues,
             selectedVenueID: $model.selectedVenueID,
             initialRegion: Self.metroMelbourne,
-            locateRequest: locateRequest
+            locateRequest: locateRequest,
+            visibleBottom: sheetTop
         ) { model.visibleRegion = $0 }
         .ignoresSafeArea()
         .overlay(alignment: .topTrailing) {
@@ -26,6 +29,7 @@ struct ExplorerView: View {
         }
         .sheet(isPresented: .constant(true)) {
             GigSheet(model: model)
+                .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { sheetTop = $0 }
                 .presentationDetents([.height(120), .fraction(0.4), .large], selection: $detent)
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.4)))
                 .presentationBackground(Color.night)

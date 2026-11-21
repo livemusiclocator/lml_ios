@@ -1,8 +1,9 @@
 name = "Don't count gigs hidden under the sheet"
-status = "todo"
+status = "done"
+owner = "mark"
 description = "The sheet lists the gigs inside the map's visible region, but the region includes the part of the map under the sheet (and under the date pill). At the middle detent that's ~40% of the screen, so the count and list include pins you can't see. Fix: shrink the region by the sheet's height (detent fraction) before filtering, or give the map a bottom safe-area inset for the sheet."
 created_at = "2026-11-21T03:16:55.684367Z"
-updated_at = "2026-11-21T03:16:55.684367Z"
+updated_at = "2026-11-21T04:08:16.964403Z"
 tags = [
     "explorer",
     "map",
