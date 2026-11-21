@@ -7,15 +7,23 @@ import SwiftUI
 struct ExplorerView: View {
     @State private var model = ExplorerModel()
     @State private var detent: PresentationDetent = .fraction(0.4)
+    @State private var locateRequest = 0
 
     var body: some View {
         VenueMap(
             venues: model.venues,
             selectedVenueID: $model.selectedVenueID,
-            initialRegion: Self.metroMelbourne
+            initialRegion: Self.metroMelbourne,
+            locateRequest: locateRequest
         ) { model.visibleRegion = $0 }
         .ignoresSafeArea()
-        .overlay(alignment: .topTrailing) { datePicker.padding() }
+        .overlay(alignment: .topTrailing) {
+            VStack(alignment: .trailing, spacing: 12) {
+                datePicker
+                locateButton
+            }
+            .padding()
+        }
         .sheet(isPresented: .constant(true)) {
             GigSheet(model: model)
                 .presentationDetents([.height(120), .fraction(0.4), .large], selection: $detent)
@@ -53,6 +61,18 @@ struct ExplorerView: View {
             .shadow(color: .black.opacity(0.4), radius: 6, y: 2)
         }
         .accessibilityLabel("Choose dates: \(model.range.caption)")
+    }
+
+    private var locateButton: some View {
+        Button { locateRequest += 1 } label: {
+            Image(systemName: "location.fill")
+                .font(.subheadline.bold())
+                .foregroundStyle(Color.lmlPinkLight)
+                .frame(width: 40, height: 40)
+                .background(Color.nightRaised.opacity(0.95), in: .circle)
+                .shadow(color: .black.opacity(0.4), radius: 6, y: 2)
+        }
+        .accessibilityLabel("Show where I am")
     }
 
     /// Where the map starts: metro Melbourne, where most of the gigs are.

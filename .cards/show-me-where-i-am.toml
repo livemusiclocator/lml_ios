@@ -1,7 +1,8 @@
 name = "Show me where I am"
-status = "todo"
+status = "done"
+owner = "claudia"
 description = "With the location picker gone, the way to get somewhere is panning. Add a locate-me button (MapUserLocationButton) and ask for when-in-use location permission, so people outside Melbourne can jump to their own area. Start position stays metro Melbourne."
 created_at = "2026-11-21T03:16:55.689200Z"
-updated_at = "2026-11-21T03:16:55.689200Z"
+updated_at = "2026-11-21T03:30:24.785359Z"
 tags = ["map"]
 priority = "low"

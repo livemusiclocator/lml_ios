@@ -7,6 +7,8 @@ struct VenueMap: UIViewRepresentable {
     let venues: [Venue]
     @Binding var selectedVenueID: Venue.ID?
     let initialRegion: MKCoordinateRegion
+    /// Bumped by the locate button; each new value jumps to the person.
+    var locateRequest = 0
     /// Called when the map comes to rest after a pan or zoom.
     var onRegionChange: (MKCoordinateRegion) -> Void = { _ in }
 
@@ -22,16 +24,30 @@ struct VenueMap: UIViewRepresentable {
         map.register(VenueMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier)
         map.register(ClusterMarker.self, forAnnotationViewWithReuseIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier)
         map.setRegion(initialRegion, animated: false)
+        map.showsUserLocation = true
+        context.coordinator.locationManager.requestWhenInUseAuthorization()
         return map
     }
 
     func updateUIView(_ map: MKMapView, context: Context) {
         context.coordinator.parent = self
+        if locateRequest != context.coordinator.lastLocateRequest {
+            context.coordinator.lastLocateRequest = locateRequest
+            context.coordinator.locate(on: map)
+        }
         syncAnnotations(on: map)
         syncSelection(on: map)
     }
 
     func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
+
+    /// A few suburbs around the person, with them in the part of the map above
+    /// the sheet rather than in the middle of the screen, where it would hide them.
+    static func region(around coordinate: CLLocationCoordinate2D) -> MKCoordinateRegion {
+        let span = MKCoordinateSpan(latitudeDelta: 0.06, longitudeDelta: 0.06)
+        let center = CLLocationCoordinate2D(latitude: coordinate.latitude - span.latitudeDelta * 0.2, longitude: coordinate.longitude)
+        return MKCoordinateRegion(center: center, span: span)
+    }
 
     private func syncAnnotations(on map: MKMapView) {
         let existing = map.annotations.compactMap { $0 as? VenueAnnotation }
@@ -56,9 +72,43 @@ struct VenueMap: UIViewRepresentable {
     @MainActor
     final class Coordinator: NSObject, MKMapViewDelegate {
         var parent: VenueMap
+        let locationManager = CLLocationManager()
+        /// The map jumps to the person once, on the first fix, and then leaves
+        /// the map alone; the locate button brings them back.
+        private var hasJumpedToUser = false
 
         init(parent: VenueMap) {
             self.parent = parent
+        }
+
+        var lastLocateRequest = 0
+
+        func locate(on map: MKMapView) {
+            if let location = map.userLocation.location {
+                map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
+            } else {
+                // no fix yet (or no permission): jump when one arrives
+                hasJumpedToUser = false
+                locationManager.requestWhenInUseAuthorization()
+            }
+        }
+
+        func mapView(_ map: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
+            // the standard blue dot, not a venue pin that could be grouped
+            annotation is MKUserLocation ? nil : map.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier, for: annotation)
+        }
+
+        func mapView(_ map: MKMapView, didAdd views: [MKAnnotationView]) {
+            // you-are-here sits on top of the pins
+            for view in views where view.annotation is MKUserLocation {
+                view.zPriority = .max
+            }
+        }
+
+        func mapView(_ map: MKMapView, didUpdate userLocation: MKUserLocation) {
+            guard !hasJumpedToUser, let location = userLocation.location else { return }
+            hasJumpedToUser = true
+            map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
         }
 
         func mapView(_ map: MKMapView, regionDidChangeAnimated animated: Bool) {
@@ -71,6 +121,8 @@ struct VenueMap: UIViewRepresentable {
                 // a numbered pin opens up: zoom in until its venues separate
                 map.deselectAnnotation(cluster, animated: false)
                 map.showAnnotations(cluster.memberAnnotations, animated: true)
+            } else if annotation is MKUserLocation {
+                map.deselectAnnotation(annotation, animated: false)
             } else if let venue = annotation as? VenueAnnotation {
                 parent.selectedVenueID = venue.venue.id
             }
