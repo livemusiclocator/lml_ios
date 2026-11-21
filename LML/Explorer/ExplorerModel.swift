@@ -1,12 +1,18 @@
 import Foundation
+import MapKit
 import Observation
 
-/// Everything the explorer screen shows: which gigs, for where and when, and
-/// which venue (if any) the sheet is narrowed to.
+/// Everything the explorer screen shows: which gigs, for when, and which of
+/// them the sheet lists.
+///
+/// Every gig in the date range is fetched at once, so the map always has every
+/// pin. The sheet lists the gigs on the part of the map in view, or one venue's
+/// gigs when a pin is selected.
 @MainActor
 @Observable
 final class ExplorerModel {
-    var location: Location = .anywhere
+    /// The part of the map in view, once the map has reported it.
+    var visibleRegion: MKCoordinateRegion?
     var range: DateRange = .thisWeek
     var selectedVenueID: Venue.ID?
     /// The gig pages pushed over the sheet's list.
@@ -27,7 +33,7 @@ final class ExplorerModel {
         error = nil
         defer { isLoading = false }
         do {
-            gigs = try await api.gigs(location: location, range: range)
+            gigs = try await api.gigs(range: range)
             if let selectedVenueID, !venues.contains(where: { $0.id == selectedVenueID }) {
                 self.selectedVenueID = nil
             }
@@ -54,12 +60,29 @@ final class ExplorerModel {
         venues.first { $0.id == selectedVenueID }
     }
 
+    /// The gigs the sheet lists: the selected venue's, or those on the part of
+    /// the map in view. A venue without coordinates has no pin, so its gigs are
+    /// never in view.
+    var shownGigs: [Gig] {
+        if let selectedVenueID {
+            return gigs.filter { $0.venue.id == selectedVenueID }
+        }
+        guard let visibleRegion else { return gigs }
+        return gigs.filter { $0.venue.coordinate.map(visibleRegion.contains) ?? false }
+    }
+
     /// The sheet's gigs, grouped under a heading per day.
     var days: [(date: String, gigs: [Gig])] {
-        let shown = gigs.filter { selectedVenueID == nil || $0.venue.id == selectedVenueID }
-        let byDate = Dictionary(grouping: shown, by: \.date)
+        let byDate = Dictionary(grouping: shownGigs, by: \.date)
         return byDate.keys.sorted().map { date in
             (date, byDate[date]!.sorted { ($0.startTime ?? "99") < ($1.startTime ?? "99") })
         }
+    }
+}
+
+extension MKCoordinateRegion {
+    func contains(_ coordinate: CLLocationCoordinate2D) -> Bool {
+        abs(coordinate.latitude - center.latitude) <= span.latitudeDelta / 2
+            && abs(coordinate.longitude - center.longitude) <= span.longitudeDelta / 2
     }
 }

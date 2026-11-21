@@ -1,13 +1,17 @@
 name = "Fit the Anywhere map to the gig pins"
-status = "todo"
+status = "done"
 description = """
 On launch with location = Anywhere the map is centred on central Victoria (around Maryborough), and the Melbourne and Bendigo pins pile up against the top edge.
 
 Fix: after each load, set the camera to a region that fits every venue pin (with padding so pins don't sit under the location/date header or the gig sheet). Fall back to the location's fixed region when there are no pins. A named location (not Anywhere) can probably keep its fixed region.
 
-Code: ExplorerView.region(for:) and the camera state in LML/Explorer/ExplorerView.swift."""
+Code: ExplorerView.region(for:) and the camera state in LML/Explorer/ExplorerView.swift.
+
+## Outcome
+
+Overtaken: the app now always fetches every location's gigs, starts on metro Melbourne and has no location picker, so there's no Anywhere view to fit."""
 created_at = "2026-11-21T02:48:54.391737Z"
-updated_at = "2026-11-21T02:48:54.391737Z"
+updated_at = "2026-11-21T03:16:55.679750Z"
 tags = [
     "map",
     "explorer",

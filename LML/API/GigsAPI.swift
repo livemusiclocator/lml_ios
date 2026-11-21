@@ -5,11 +5,13 @@ struct GigsAPI: Sendable {
     var baseURL = URL(string: "https://api.lml.live/gigs")!
     var session: URLSession = .shared
 
-    func gigs(location: Location, range: DateRange, now: Date = .now) async throws -> [Gig] {
+    /// Every location's gigs in the range. The website asks for one volunteer
+    /// group's location at a time; the app lets the map do that job.
+    func gigs(range: DateRange, now: Date = .now) async throws -> [Gig] {
         let dates = range.dates(now: now)
         var components = URLComponents(url: baseURL.appending(path: "query"), resolvingAgainstBaseURL: false)!
         components.queryItems = [
-            URLQueryItem(name: "location", value: location.id),
+            URLQueryItem(name: "location", value: "anywhere"),
             URLQueryItem(name: "date_from", value: dates.from),
             URLQueryItem(name: "date_to", value: dates.to),
         ]

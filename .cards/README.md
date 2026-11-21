@@ -2,20 +2,22 @@
 
 # LML iOS
 
-## Todo (5)
+## Todo (6)
 
-- [Fit the Anywhere map to the gig pins](fit-the-anywhere-map-to-the-gig-pins.toml) — priority: medium · tags: `map`, `explorer`
 - [Sort after-midnight sets at the end of the night](sort-after-midnight-sets-at-the-end-of-the-night.toml) — priority: medium · tags: `explorer`, `dates`
 - [Close the gap at the top of the gig sheet](close-the-gap-at-the-top-of-the-gig-sheet.toml) — priority: low · tags: `explorer`, `ui`
 - [Show set times in the gig page lineup](show-set-times-in-the-gig-page-lineup.toml) — priority: low · tags: `gig-detail`
 - [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
+- [Don't count gigs hidden under the sheet](don_t-count-gigs-hidden-under-the-sheet.toml) — priority: low · tags: `explorer`, `map`
+- [Show me where I am](show-me-where-i-am.toml) — priority: low · tags: `map`
 
 ## In Progress (0)
 
 _none_
 
-## Done (1)
+## Done (2)
 
+- [Fit the Anywhere map to the gig pins](fit-the-anywhere-map-to-the-gig-pins.toml) — priority: medium · tags: `map`, `explorer`
 - [Gig detail page like the JS front end](gig-detail-page-like-the-js-front-end.toml) — owner: claudia · priority: high · tags: `gig-detail`, `ui`
 
 ## Blocked (0)

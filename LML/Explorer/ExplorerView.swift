@@ -2,24 +2,20 @@ import MapKit
 import SwiftUI
 
 /// The map of venues with the gig list in a sheet over it, like the website's
-/// explorer. Tapping a pin narrows the sheet to that venue's gigs.
+/// explorer. The sheet lists the gigs on the part of the map in view; tapping
+/// a pin narrows it to that venue's gigs.
 struct ExplorerView: View {
     @State private var model = ExplorerModel()
-    @State private var camera: MapCameraPosition = .region(Self.region(for: .anywhere))
     @State private var detent: PresentationDetent = .fraction(0.4)
 
     var body: some View {
-        Map(position: $camera, selection: $model.selectedVenueID) {
-            ForEach(model.venues) { venue in
-                if let coordinate = venue.coordinate {
-                    Marker(venue.name, systemImage: "music.note", coordinate: coordinate)
-                        .tint(Color.lmlPink)
-                        .tag(venue.id)
-                }
-            }
-        }
-        .mapStyle(.standard(pointsOfInterest: .excludingAll))
-        .safeAreaInset(edge: .top, spacing: 0) { header }
+        VenueMap(
+            venues: model.venues,
+            selectedVenueID: $model.selectedVenueID,
+            initialRegion: Self.metroMelbourne
+        ) { model.visibleRegion = $0 }
+        .ignoresSafeArea()
+        .overlay(alignment: .topTrailing) { datePicker.padding() }
         .sheet(isPresented: .constant(true)) {
             GigSheet(model: model)
                 .presentationDetents([.height(120), .fraction(0.4), .large], selection: $detent)
@@ -27,12 +23,8 @@ struct ExplorerView: View {
                 .presentationBackground(Color.night)
                 .interactiveDismissDisabled()
         }
-        .task(id: Query(location: model.location, range: model.range)) {
+        .task(id: model.range) {
             await model.load()
-        }
-        .onChange(of: model.location) { _, location in
-            model.selectedVenueID = nil
-            withAnimation { camera = .region(Self.region(for: location)) }
         }
         .onChange(of: model.selectedVenueID) { _, id in
             if id != nil, detent == .height(120) { detent = .fraction(0.4) }
@@ -43,55 +35,31 @@ struct ExplorerView: View {
         .preferredColorScheme(.dark)
     }
 
-    private var header: some View {
-        HStack(spacing: 12) {
-            Menu {
-                Picker("Location", selection: $model.location) {
-                    ForEach(Location.all) { Text($0.caption).tag($0) }
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Text(model.location.caption).font(.title2.bold())
-                    Image(systemName: "chevron.down").font(.footnote).foregroundStyle(Color.inkMuted)
-                }
-                .foregroundStyle(Color.ink)
+    private var datePicker: some View {
+        Menu {
+            Picker("When", selection: $model.range) {
+                ForEach(DateRange.allCases) { Text($0.caption).tag($0) }
             }
-            .accessibilityLabel("Choose a location")
-
-            Spacer()
-
-            Menu {
-                Picker("When", selection: $model.range) {
-                    ForEach(DateRange.allCases) { Text($0.caption).tag($0) }
-                }
-            } label: {
-                HStack(spacing: 4) {
-                    Text(model.range.caption)
-                    Image(systemName: "chevron.down").font(.caption2)
-                }
-                .font(.subheadline.bold())
-                .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 8)
-                .background(Color.lmlPink, in: .capsule)
+        } label: {
+            HStack(spacing: 4) {
+                Text(model.range.caption)
+                Image(systemName: "chevron.down").font(.caption2)
             }
+            .font(.subheadline.bold())
+            .foregroundStyle(.white)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
+            .background(Color.lmlPink, in: .capsule)
+            .shadow(color: .black.opacity(0.4), radius: 6, y: 2)
         }
-        .padding(.horizontal)
-        .padding(.vertical, 10)
-        .background(Color.nightRaised.opacity(0.95))
+        .accessibilityLabel("Choose dates: \(model.range.caption)")
     }
 
-    private static func region(for location: Location) -> MKCoordinateRegion {
-        MKCoordinateRegion(
-            center: location.center,
-            span: MKCoordinateSpan(latitudeDelta: location.spanDegrees, longitudeDelta: location.spanDegrees)
-        )
-    }
-
-    private struct Query: Equatable {
-        let location: Location
-        let range: DateRange
-    }
+    /// Where the map starts: metro Melbourne, where most of the gigs are.
+    private static let metroMelbourne = MKCoordinateRegion(
+        center: CLLocationCoordinate2D(latitude: -37.83, longitude: 145.0),
+        span: MKCoordinateSpan(latitudeDelta: 0.26, longitudeDelta: 0.26)
+    )
 }
 
 private struct GigSheet: View {
@@ -103,7 +71,7 @@ private struct GigSheet: View {
                 if let error = model.error {
                     Text(error).foregroundStyle(Color.inkMuted)
                 } else if !model.isLoading && model.days.isEmpty {
-                    Text("No gigs \(model.range.caption.lowercased()).").foregroundStyle(Color.inkMuted)
+                    Text(model.gigs.isEmpty ? "No gigs \(model.range.caption.lowercased())." : "No gigs on this part of the map \(model.range.caption.lowercased()).").foregroundStyle(Color.inkMuted)
                 }
                 ForEach(model.days, id: \.date) { day in
                     Section(DayHeading.text(for: day.date)) {
@@ -125,7 +93,7 @@ private struct GigSheet: View {
             .overlay {
                 if model.isLoading && model.gigs.isEmpty { ProgressView() }
             }
-            .navigationTitle(model.selectedVenue?.name ?? "\(model.days.reduce(0) { $0 + $1.gigs.count }) gigs")
+            .navigationTitle(model.selectedVenue?.name ?? "\(model.shownGigs.count) gigs")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if model.selectedVenue != nil {
