@@ -1,0 +1,24 @@
+name = "Work on iPad"
+status = "todo"
+description = """
+The project targets iPhone and iPad (TARGETED_DEVICE_FAMILY 1,2) but is laid out for a portrait phone and locked to portrait, which also fails App Store upload validation for iPad (iPad apps must support every orientation unless they require full screen).
+
+Make it a proper iPad app, using the space:
+- Support every orientation and iPad multitasking (Split View, Slide Over, Stage Manager windows), which means sizes from narrow to very wide.
+- Wide layouts: the gig list in a sidebar or a floating panel beside the map rather than a bottom sheet, with the gig page next to the list or replacing it, map always visible. The website does something similar from tablet width up (the map beside the page).
+- Narrow windows (Slide Over, small Split View) can keep the phone layout.
+- The 'map above the sheet' count needs to work with a side panel: the visible region is the map not covered by the panel.
+- The jump-to-you offset and region assume a bottom sheet; revisit.
+
+Mark has an iPad Pro (12.9-inch, 6th gen) to test on; it's in Xcode's device list as 'Mark Ryall's iPad'.
+
+## Maybe
+
+- Later: once the wide layout exists, consider allowing iPhone landscape with it (panel beside the map). The phone stays portrait-only until then; Apple doesn't require landscape on iPhone."""
+created_at = "2026-11-21T05:48:56.388816Z"
+updated_at = "2026-11-21T05:49:38.899573Z"
+tags = [
+    "ipad",
+    "ui",
+]
+priority = "medium"

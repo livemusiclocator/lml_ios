@@ -1,0 +1,50 @@
+name = "Get ready for App Store submission"
+status = "todo"
+description = """
+What App Store review and upload need, from a walkthrough on 2026-11-21. See also 'Stay on Melbourne when there are no gigs near you' (the biggest review risk) and 'Work on iPad' (device family).
+
+## Notes
+- Mark's developer account is Individual (team KP8KF4FKHT), so the store shows 'Mark Ryall' as the seller. An Organisation account would show Live Music Locator and allow other team members, but needs a D-U-N-S number.
+- App Privacy: location never leaves the phone (the app fetches every gig and filters on the map), so 'Data Not Collected' is honest.
+- Age rating: gigs mention 18+ events and drinks specials; answer the alcohol questions honestly (probably 12+ or 17+).
+- Review notes to include: LML lists live music in Victoria and Queensland, Australia; outside Australia the map opens on Melbourne; try Fitzroy or Fortitude Valley."""
+created_at = "2026-11-21T05:48:56.340925Z"
+updated_at = "2026-11-21T05:48:56.384293Z"
+tags = ["app-store"]
+priority = "medium"
+
+[[checklist]]
+text = "Set version and build numbers (MARKETING_VERSION 1.0, CURRENT_PROJECT_VERSION 1) in project.yml"
+checked = false
+
+[[checklist]]
+text = "Set ITSAppUsesNonExemptEncryption = NO (HTTPS only), so uploads skip the encryption question"
+checked = false
+
+[[checklist]]
+text = "Decide device family: iPhone only for the first release, unless the iPad card is done (portrait-only iPad apps fail upload validation)"
+checked = false
+
+[[checklist]]
+text = "Create the app in App Store Connect (name must be unique on the store)"
+checked = false
+
+[[checklist]]
+text = "Privacy policy URL and support URL"
+checked = false
+
+[[checklist]]
+text = "Screenshots (6.9 inch iPhone; iPad too if supporting iPad), description, keywords, category"
+checked = false
+
+[[checklist]]
+text = "App Privacy labels (Data Not Collected) and age rating questionnaire"
+checked = false
+
+[[checklist]]
+text = "Archive and upload; test via TestFlight"
+checked = false
+
+[[checklist]]
+text = "Write review notes about Australia-only content; decide availability (Australia only?)"
+checked = false

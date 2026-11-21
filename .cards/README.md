@@ -2,11 +2,14 @@
 
 # LML iOS
 
-## Todo (3)
+## Todo (6)
 
 - [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
 - [Label gig times with the venue's time zone when it isn't the phone's](label-gig-times-with-the-venue_s-time-zone-when-it-isn_t-the-phone_s.toml) — priority: low · tags: `gig-detail`, `dates`
 - [Filters that work with hundreds of tags](filters-that-work-with-hundreds-of-tags.toml) — priority: medium · tags: `filters`, `explorer`
+- [Stay on Melbourne when there are no gigs near you](stay-on-melbourne-when-there-are-no-gigs-near-you.toml) — priority: high · tags: `map`, `app-store`
+- [Get ready for App Store submission](get-ready-for-app-store-submission.toml) — priority: medium · tags: `app-store` · checklist: 0/9
+- [Work on iPad](work-on-ipad.toml) — priority: medium · tags: `ipad`, `ui`
 
 ## In Progress (0)
 

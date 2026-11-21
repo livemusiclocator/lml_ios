@@ -1,0 +1,15 @@
+name = "Stay on Melbourne when there are no gigs near you"
+status = "todo"
+description = """
+On the first location fix the map jumps to a few suburbs around the person. Outside the areas LML covers (Victoria and Queensland for now) that lands on an empty map: 'No gigs on this part of the map'.
+
+This is the biggest App Store review risk: reviewers are mostly in the US, so they'd allow location, land in Cupertino with nothing, and likely reject under 2.1 App Completeness / 4.2 Minimum Functionality. It's also what someone in Sydney or Adelaide would see.
+
+Only jump if there are gigs within reach of the person (say 25 km, in the loaded range); otherwise stay on metro Melbourne. The locate button should still go to them when tapped, since then they asked. Needs the gigs loaded before deciding, so the first fix may arrive before them: decide once both are in."""
+created_at = "2026-11-21T05:48:56.332467Z"
+updated_at = "2026-11-21T05:48:56.332467Z"
+tags = [
+    "map",
+    "app-store",
+]
+priority = "high"
