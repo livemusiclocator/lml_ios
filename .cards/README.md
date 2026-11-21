@@ -2,11 +2,12 @@
 
 # LML iOS
 
-## Todo (3)
+## Todo (4)
 
 - [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
 - [Work out today from the phone's clock, not Melbourne's](work-out-today-from-the-phone_s-clock_-not-melbourne_s.toml) — priority: low · tags: `dates`
 - [Label gig times with the venue's time zone when it isn't the phone's](label-gig-times-with-the-venue_s-time-zone-when-it-isn_t-the-phone_s.toml) — priority: low · tags: `gig-detail`, `dates`
+- [Filters that work with hundreds of tags](filters-that-work-with-hundreds-of-tags.toml) — priority: medium · tags: `filters`, `explorer`
 
 ## In Progress (0)
 

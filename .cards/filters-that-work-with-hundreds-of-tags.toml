@@ -1,0 +1,33 @@
+name = "Filters that work with hundreds of tags"
+status = "todo"
+description = """
+The website's genre and info filters are awkward: with lots of gigs in view there are hundreds of tags to wade through. The app has no filters yet; work out a better shape before building them.
+
+## The data (everywhere, 21 Nov - 5 Dec 2026, 769 gigs)
+- Genre tags: 332 distinct, on 700 gigs. 191 of them are used once. The top 20 cover 55% of uses.
+- Case and spelling splits: rock 114 + Rock 105, DJ/dj, indie, acoustic, folk, country, hip-hop, alternative, covers, soul...
+- Info tags: 91 distinct, on 300 gigs; the top 20 cover 81% of uses.
+- 'Free' is spread across Free 116, free 68, Free entry 19, Free Entry 3, 'free entry before 10pm' 3... (GigRow.isFree only matches 'free', so it misses 'Free entry' too.)
+
+## Options to weigh
+- Clean up tags: merge case and obvious synonyms (Free / Free entry). Probably belongs in the API (lml_rb) so the website gets it too; the app could do case-folding meanwhile.
+- Filter the filters: a search box over the tag list, so you type 'jaz' rather than scroll.
+- Only what's in view: list tags from the gigs on the visible map (like the count), most-used first, with counts; hide the rest behind 'More'.
+- Fixed toggles for the info tags people actually filter on (Free, 18+ / All ages, Late night) instead of a tag cloud.
+- Curated genre groups (e.g. Rock & indie, Electronic & DJ, Folk & acoustic) as the first level, raw tags underneath. Needs someone to own the mapping.
+- Where filters live: a row of chips under the date pill vs a filter sheet; how active filters show on the map pins and the count.
+
+## Questions
+- Which of these would the website adopt too, so the two stay alike?
+- Is the tag clean-up an API job (lml_rb) or an app-side mapping?
+
+## Decisions so far
+
+- No venue filter. The website's venue filter list makes an enormous mess; in the app the map does that job: pan to an area to list its gigs, tap a pin for one venue's. Filters are for genre and info tags only."""
+created_at = "2026-11-21T05:02:53.366062Z"
+updated_at = "2026-11-21T05:03:18.490051Z"
+tags = [
+    "filters",
+    "explorer",
+]
+priority = "medium"
