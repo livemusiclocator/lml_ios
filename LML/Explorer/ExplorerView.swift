@@ -20,6 +20,7 @@ struct ExplorerView: View {
             selectedVenueID: $model.selectedVenueID,
             initialRegion: Self.metroMelbourne,
             locateRequest: locateRequest,
+            venuesLoaded: model.hasLoaded,
             visibleBottom: sheetTop
         ) { model.visibleRegion = $0 }
         .ignoresSafeArea()

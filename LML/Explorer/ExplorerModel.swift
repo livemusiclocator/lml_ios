@@ -20,6 +20,8 @@ final class ExplorerModel {
 
     private(set) var gigs: [Gig] = []
     private(set) var isLoading = false
+    /// Whether gigs have loaded at least once, so an empty list means none.
+    private(set) var hasLoaded = false
     private(set) var error: String?
 
     private let api: GigsAPI
@@ -34,6 +36,7 @@ final class ExplorerModel {
         defer { isLoading = false }
         do {
             gigs = try await api.gigs(range: range)
+            hasLoaded = true
             if let selectedVenueID, !venues.contains(where: { $0.id == selectedVenueID }) {
                 self.selectedVenueID = nil
             }

@@ -9,6 +9,8 @@ struct VenueMap: UIViewRepresentable {
     let initialRegion: MKCoordinateRegion
     /// Bumped by the locate button; each new value jumps to the person.
     var locateRequest = 0
+    /// Whether `venues` is the loaded list yet, rather than empty for now.
+    var venuesLoaded = false
     /// How far down the screen the map can be seen: the top of the gig sheet.
     /// Pins below it are hidden, so they aren't in the visible region.
     var visibleBottom: CGFloat?
@@ -45,9 +47,24 @@ struct VenueMap: UIViewRepresentable {
         }
         syncAnnotations(on: map)
         syncSelection(on: map)
+        context.coordinator.jumpToUserIfWanted(on: map)
     }
 
     func makeCoordinator() -> Coordinator { Coordinator(parent: self) }
+
+    /// How close a venue has to be for the map to open on the person: a
+    /// metro area's worth.
+    nonisolated static let nearbyMeters: CLLocationDistance = 25_000
+
+    /// Whether any venue is within reach of the person. Outside the places LML
+    /// covers there aren't, and jumping there would open on an empty map.
+    nonisolated static func hasVenues(near coordinate: CLLocationCoordinate2D, in venues: [Venue]) -> Bool {
+        let here = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+        return venues.contains { venue in
+            guard let c = venue.coordinate else { return false }
+            return here.distance(from: CLLocation(latitude: c.latitude, longitude: c.longitude)) <= nearbyMeters
+        }
+    }
 
     /// A few suburbs around the person, with them in the part of the map above
     /// the sheet rather than in the middle of the screen, where it would hide them.
@@ -81,9 +98,13 @@ struct VenueMap: UIViewRepresentable {
     final class Coordinator: NSObject, MKMapViewDelegate {
         var parent: VenueMap
         let locationManager = CLLocationManager()
-        /// The map jumps to the person once, on the first fix, and then leaves
-        /// the map alone; the locate button brings them back.
-        private var hasJumpedToUser = false
+        /// On launch the map jumps to the person once, if there are gigs near
+        /// them, and then leaves the map alone. It needs both their location and
+        /// the gigs to decide, and either can arrive first.
+        private var awaitingFirstJump = true
+        /// The locate button was tapped before there was a fix: go to them
+        /// when it arrives, gigs or not, since they asked.
+        private var jumpWhenLocated = false
 
         init(parent: VenueMap) {
             self.parent = parent
@@ -96,9 +117,24 @@ struct VenueMap: UIViewRepresentable {
                 map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
             } else {
                 // no fix yet (or no permission): jump when one arrives
-                hasJumpedToUser = false
+                jumpWhenLocated = true
                 locationManager.requestWhenInUseAuthorization()
             }
+        }
+
+        func jumpToUserIfWanted(on map: MKMapView) {
+            guard let location = map.userLocation.location else { return }
+            if jumpWhenLocated {
+                jumpWhenLocated = false
+                awaitingFirstJump = false
+                map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
+                return
+            }
+            guard awaitingFirstJump, parent.venuesLoaded else { return }
+            awaitingFirstJump = false
+            // nowhere near any gigs (another state, or overseas): stay on Melbourne
+            guard VenueMap.hasVenues(near: location.coordinate, in: parent.venues) else { return }
+            map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
         }
 
         func mapView(_ map: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
@@ -114,9 +150,7 @@ struct VenueMap: UIViewRepresentable {
         }
 
         func mapView(_ map: MKMapView, didUpdate userLocation: MKUserLocation) {
-            guard !hasJumpedToUser, let location = userLocation.location else { return }
-            hasJumpedToUser = true
-            map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
+            jumpToUserIfWanted(on: map)
         }
 
         var lastVisibleBottom: CGFloat?
