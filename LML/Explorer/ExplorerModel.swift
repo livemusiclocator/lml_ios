@@ -9,6 +9,8 @@ final class ExplorerModel {
     var location: Location = .anywhere
     var range: DateRange = .thisWeek
     var selectedVenueID: Venue.ID?
+    /// The gig pages pushed over the sheet's list.
+    var path: [Gig] = []
 
     private(set) var gigs: [Gig] = []
     private(set) var isLoading = false
@@ -34,6 +36,12 @@ final class ExplorerModel {
         } catch {
             self.error = "Couldn't load gigs. Pull to try again."
         }
+    }
+
+    /// Back to the list, narrowed to one venue's gigs.
+    func show(venue: Venue) {
+        selectedVenueID = venue.id
+        path = []
     }
 
     /// One pin per venue, however many gigs it has.

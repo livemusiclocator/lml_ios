@@ -37,6 +37,9 @@ struct ExplorerView: View {
         .onChange(of: model.selectedVenueID) { _, id in
             if id != nil, detent == .height(120) { detent = .fraction(0.4) }
         }
+        .onChange(of: model.path.isEmpty) { _, isEmpty in
+            withAnimation { detent = isEmpty ? .fraction(0.4) : .large }
+        }
         .preferredColorScheme(.dark)
     }
 
@@ -95,7 +98,7 @@ private struct GigSheet: View {
     @Bindable var model: ExplorerModel
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $model.path) {
             List {
                 if let error = model.error {
                     Text(error).foregroundStyle(Color.inkMuted)
@@ -105,7 +108,9 @@ private struct GigSheet: View {
                 ForEach(model.days, id: \.date) { day in
                     Section(DayHeading.text(for: day.date)) {
                         ForEach(day.gigs) { gig in
-                            GigRow(gig: gig, showVenue: model.selectedVenueID == nil)
+                            NavigationLink(value: gig) {
+                                GigRow(gig: gig, showVenue: model.selectedVenueID == nil)
+                            }
                         }
                     }
                 }
@@ -114,6 +119,9 @@ private struct GigSheet: View {
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .refreshable { await model.load() }
+            .navigationDestination(for: Gig.self) { gig in
+                GigDetailView(gig: gig) { model.show(venue: $0) }
+            }
             .overlay {
                 if model.isLoading && model.gigs.isEmpty { ProgressView() }
             }
