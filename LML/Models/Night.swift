@@ -36,6 +36,14 @@ enum Night {
         return untimed + timed
     }
 
+    /// An act's upcoming gigs, soonest night first.
+    static func upcoming(_ gigs: [Act.UpcomingGig]) -> [Act.UpcomingGig] {
+        gigs.sorted {
+            (of(date: $0.date, startTime: $0.startTime), sortKey(startTime: $0.startTime))
+                < (of(date: $1.date, startTime: $1.startTime), sortKey(startTime: $1.startTime))
+        }
+    }
+
     /// Only the gigs whose night falls in `from...to` (both "YYYY-MM-DD").
     static func gigs(_ gigs: [Gig], from: String, to: String) -> [Gig] {
         gigs.filter { (from...to).contains($0.night) }

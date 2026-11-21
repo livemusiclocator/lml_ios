@@ -1,6 +1,7 @@
 import Foundation
 import MapKit
 import Observation
+import SwiftUI
 
 /// Everything the explorer screen shows: which gigs, for when, and which of
 /// them the sheet lists.
@@ -16,7 +17,7 @@ final class ExplorerModel {
     var range: DateRange = .thisWeek
     var selectedVenueID: Venue.ID?
     /// The gig pages pushed over the sheet's list.
-    var path: [Gig] = []
+    var path = NavigationPath()
 
     private(set) var gigs: [Gig] = []
     private(set) var isLoading = false
@@ -50,7 +51,7 @@ final class ExplorerModel {
     /// Back to the list, narrowed to one venue's gigs.
     func show(venue: Venue) {
         selectedVenueID = venue.id
-        path = []
+        path = NavigationPath()
     }
 
     /// One pin per venue, however many gigs it has.

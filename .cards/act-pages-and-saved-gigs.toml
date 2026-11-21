@@ -1,7 +1,0 @@
-name = "Act pages and saved gigs"
-status = "todo"
-description = "Left out of the first gig page: the JS page links acts to /acts/:id (with a chevron) and has a Save gig button in the hero. Both need their own design on iOS (act data from the API; saved gigs stored locally)."
-created_at = "2026-11-21T02:53:26.514265Z"
-updated_at = "2026-11-21T02:53:26.514265Z"
-tags = ["gig-detail"]
-priority = "low"

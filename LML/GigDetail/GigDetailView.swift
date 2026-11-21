@@ -7,6 +7,10 @@ struct GigDetailView: View {
     let gig: Gig
     /// Narrows the explorer to this gig's venue.
     var showVenue: (Venue) -> Void = { _ in }
+    var api = GigsAPI()
+
+    /// The lineup's acts that have more than a name, so get a page.
+    @State private var actsWorthAPage: Set<String> = []
 
     var body: some View {
         ScrollView {
@@ -23,6 +27,21 @@ struct GigDetailView: View {
         .background(Color.night)
         .foregroundStyle(Color.ink)
         .navigationBarTitleDisplayMode(.inline)
+        .task(id: gig.id) { await findActsWorthAPage() }
+    }
+
+    private func findActsWorthAPage() async {
+        let ids = Set(gig.sets.compactMap { $0.act?.id })
+        await withTaskGroup(of: String?.self) { group in
+            for id in ids {
+                group.addTask { [api] in
+                    (try? await api.act(id: id))?.isWorthAPage == true ? id : nil
+                }
+            }
+            for await id in group {
+                if let id { actsWorthAPage.insert(id) }
+            }
+        }
     }
 
     private var header: some View {
@@ -99,20 +118,14 @@ struct GigDetailView: View {
                         .tracking(1.5)
                         .foregroundStyle(Color.inkMuted)
                     ForEach(Array(Night.lineup(gig.sets).enumerated()), id: \.offset) { _, set in
-                        // the name wraps rather than pushing the time off the end
-                        HStack(alignment: .firstTextBaseline, spacing: 12) {
-                            Text(set.act?.name ?? "TBA")
-                                .fontWeight(.semibold)
-                                .lineLimit(2)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                            if let startTime = set.startTime {
-                                Text(startTime)
-                                    .monospaced()
-                                    .foregroundStyle(Color.inkMuted)
+                        if let act = set.act, let id = act.id, actsWorthAPage.contains(id) {
+                            NavigationLink(value: Route.act(id: id, name: act.name)) {
+                                LineupRow(set: set, linked: true)
                             }
+                            .buttonStyle(.plain)
+                        } else {
+                            LineupRow(set: set, linked: false)
                         }
-                        .font(.subheadline)
-                        .padding(.vertical, 2)
                     }
                 }
             }
@@ -182,6 +195,33 @@ struct GigDetailView: View {
     }
 }
 
+/// One act in the lineup: the name wraps rather than pushing the time off the
+/// end. Acts with a page get a chevron.
+private struct LineupRow: View {
+    let set: GigSet
+    let linked: Bool
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 12) {
+            Text(set.act?.name ?? "TBA")
+                .fontWeight(.semibold)
+                .lineLimit(2)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            if let startTime = set.startTime {
+                Text(startTime)
+                    .monospaced()
+                    .foregroundStyle(Color.inkMuted)
+            }
+            if linked {
+                Image(systemName: "chevron.right").font(.caption).foregroundStyle(Color.inkDim)
+            }
+        }
+        .font(.subheadline)
+        .padding(.vertical, 2)
+        .contentShape(.rect)
+    }
+}
+
 private struct DetailRow<Content: View>: View {
     let icon: String
     @ViewBuilder let content: Content
@@ -199,7 +239,7 @@ private struct DetailRow<Content: View>: View {
     }
 }
 
-private struct Chip: View {
+struct Chip: View {
     let text: String
     let accent: Bool
 
@@ -224,7 +264,7 @@ private struct TrailingIconLabelStyle: LabelStyle {
 }
 
 /// Lays chips out in rows, wrapping when a row is full.
-private struct FlowLayout: Layout {
+struct FlowLayout: Layout {
     var spacing: CGFloat
 
     func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout ()) -> CGSize {

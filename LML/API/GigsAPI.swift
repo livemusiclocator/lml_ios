@@ -28,4 +28,39 @@ struct GigsAPI: Sendable {
         // and the first day's after-midnight sets belong to the night before it
         return Night.gigs(gigs, from: nights.from, to: nights.to)
     }
+
+    /// One gig, in full.
+    func gig(id: String) async throws -> Gig {
+        try await get(baseURL.appending(path: id))
+    }
+
+    /// One act, with their upcoming gigs. Remembered for the session, since a
+    /// gig page looks up its lineup and the act page then shows the same act.
+    func act(id: String) async throws -> Act {
+        if let act = await ActCache.shared.act(id: id) { return act }
+        let act: Act = try await get(actsURL.appending(path: id))
+        await ActCache.shared.store(act)
+        return act
+    }
+
+    var actsURL: URL { baseURL.deletingLastPathComponent().appending(path: "acts") }
+
+    private func get<T: Decodable>(_ url: URL) async throws -> T {
+        let (data, response) = try await session.data(from: url)
+        if let http = response as? HTTPURLResponse {
+            if http.statusCode == 404 { throw NotFound() }
+            if !(200..<300).contains(http.statusCode) { throw URLError(.badServerResponse) }
+        }
+        return try JSONDecoder().decode(T.self, from: data)
+    }
+
+    struct NotFound: Error {}
+}
+
+private actor ActCache {
+    static let shared = ActCache()
+    private var acts: [Act.ID: Act] = [:]
+
+    func act(id: Act.ID) -> Act? { acts[id] }
+    func store(_ act: Act) { acts[act.id] = act }
 }

@@ -7,8 +7,12 @@ enum GigFormat {
 
     /// "TUE 3 NOV · 22:30", the line above the gig's name.
     static func kicker(for gig: Gig) -> String {
-        let day = formatted(gig.date, template: "EEEdMMM") ?? gig.date
-        return [day, gig.startTime].compactMap { $0 }.joined(separator: " · ").uppercased()
+        kicker(date: gig.date, startTime: gig.startTime)
+    }
+
+    static func kicker(date: String, startTime: String?) -> String {
+        let day = formatted(date, template: "EEEdMMM") ?? date
+        return [day, startTime].compactMap { $0 }.joined(separator: " · ").uppercased()
     }
 
     /// "Tuesday 3 November 2026".

@@ -1,0 +1,30 @@
+{
+    "id": "5e82ae4b-3a8d-46f1-9a63-53ae42e764fa",
+    "name": "Cheap-skate",
+    "genres": null,
+    "upcoming_gigs": [
+        {
+            "id": "503771dd-6dd1-4e35-be63-21bea1bc9514",
+            "name": "Crafted Festival Melbourne",
+            "date": "2026-11-21",
+            "start_time": "11:00",
+            "start_timestamp": "2026-11-21T11:00:00.000+11:00",
+            "ticketing_url": "https://tickets.oztix.com.au/outlet/event/40631ccc-5535-47ce-84c4-67b19492bbd7",
+            "status": "confirmed",
+            "ticket_status": null,
+            "venue": {
+                "id": "8f1f0c4f-a999-4add-97e4-3b368e0860a3",
+                "name": "Riviera Beach Club",
+                "address": "42B Marine Parade, Elwood VIC 3184",
+                "capacity": null,
+                "website": "https://www.rivierabeachclub.com.au/",
+                "postcode": "3184",
+                "vibe": "",
+                "tags": [],
+                "location_url": "https://maps.app.goo.gl/s2RNgeNMcvFbui1T8",
+                "latitude": -37.8755404,
+                "longitude": 144.9751407
+            }
+        }
+    ]
+}

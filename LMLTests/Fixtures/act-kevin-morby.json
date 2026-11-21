@@ -1,0 +1,62 @@
+{
+    "id": "cb103e02-4485-4ba0-b18c-caf593e5381f",
+    "name": "Kevin Morby",
+    "country": "USA",
+    "genres": [
+        "indie rock",
+        "folk"
+    ],
+    "website": "https://www.kevinmorby.com/",
+    "bandcamp_url": "https://kevinmorby.bandcamp.com",
+    "instagram_url": "https://www.instagram.com/kevinmorby",
+    "musicbrainz_url": "https://musicbrainz.org/artist/eac962e1-0295-4e69-a266-4dab2adb4f11",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Kevin_Morby",
+    "upcoming_gigs": [
+        {
+            "id": "5cc31b26-00a6-4013-be69-f651b97eb807",
+            "name": "Town Folk Festival",
+            "date": "2026-11-21",
+            "start_time": "12:00",
+            "start_timestamp": "2026-11-21T12:00:00.000+11:00",
+            "ticketing_url": "https://thebridgehotelcastlemaine.com/gigs/2026/11/21/town-folk-festival",
+            "status": "confirmed",
+            "ticket_status": "sold_out",
+            "venue": {
+                "id": "bdc3776f-5935-412d-8c84-fb0108923fc4",
+                "name": "The Bridge Hotel",
+                "address": "21 Walker Street Castlemaine VIC 3450",
+                "capacity": 100,
+                "website": "https://thebridgehotelcastlemaine.com/",
+                "postcode": "3450",
+                "vibe": "",
+                "tags": [],
+                "location_url": "https://maps.app.goo.gl/qH9NaTUcQVAwLRNF7",
+                "latitude": -37.0556966,
+                "longitude": 144.2120012
+            }
+        },
+        {
+            "id": "4572e1dd-719f-4395-a213-6a4c89e28a20",
+            "name": "Kevin Morby",
+            "date": "2026-11-22",
+            "start_time": "19:00",
+            "start_timestamp": "2026-11-22T19:00:00.000+11:00",
+            "ticketing_url": "https://premier.ticketek.com.au/shows/show.aspx?sh=MORBKEV26&v=FRM&utm_source=forummelbourne.com.au&utm_medium=referral&utm_campaign=MORBKEV26",
+            "status": "confirmed",
+            "ticket_status": null,
+            "venue": {
+                "id": "a574f754-cfa6-464a-b3cc-12b640d813cb",
+                "name": "The Forum",
+                "address": "154 Flinders St, Melbourne CBD, Victoria",
+                "capacity": null,
+                "website": "http://www.forummelbourne.com.au",
+                "postcode": "3000",
+                "vibe": null,
+                "tags": [],
+                "location_url": "https://maps.app.goo.gl/9tjywFENEy7vbuxF7",
+                "latitude": -37.8166,
+                "longitude": 144.9696
+            }
+        }
+    ]
+}

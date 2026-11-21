@@ -1,0 +1,16 @@
+name = "Act pages"
+status = "done"
+owner = "mark"
+description = """
+Tap an act in a gig's lineup to see them: name, where they're from, genres, their upcoming gigs (tap through to each), and links (website, Bandcamp, Instagram, Spotify, Wikipedia...), like the website's /acts/:id page (src/pages/ActDetails in lml_frontend_client).
+
+Data: api.lml.live/acts/<id> returns id, name, country, location (an LML location id), genres, the link fields that are set, and upcoming_gigs (a slim gig: id, name, date, start_time, status, ticket_status, ticketing_url, venue). A full gig is api.lml.live/gigs/<id>.
+
+Most acts are just a name so far. Kevin Morby (cb103e02-4485-4ba0-b18c-caf593e5381f) was filled in on 2026-11-21 through the admin API as a well-populated example."""
+created_at = "2026-11-21T07:05:10.851004Z"
+updated_at = "2026-11-21T07:08:46.100969Z"
+tags = [
+    "gig-detail",
+    "acts",
+]
+priority = "medium"

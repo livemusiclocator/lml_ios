@@ -4,15 +4,15 @@
 
 ## Todo (3)
 
-- [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
 - [Filters that work with hundreds of tags](filters-that-work-with-hundreds-of-tags.toml) — priority: medium · tags: `filters`, `explorer`
 - [Get ready for App Store submission](get-ready-for-app-store-submission.toml) — priority: medium · tags: `app-store` · checklist: 0/9
+- [Saved gigs](saved-gigs.toml) — priority: low · tags: `gig-detail`, `saved`
 
 ## In Progress (0)
 
 _none_
 
-## Done (11)
+## Done (12)
 
 - [Fit the Anywhere map to the gig pins](fit-the-anywhere-map-to-the-gig-pins.toml) — priority: medium · tags: `map`, `explorer`
 - [Sort after-midnight sets at the end of the night](sort-after-midnight-sets-at-the-end-of-the-night.toml) — owner: mark · priority: medium · tags: `explorer`, `dates`
@@ -25,6 +25,7 @@ _none_
 - [Label gig times with the venue's time zone when it isn't the phone's](label-gig-times-with-the-venue_s-time-zone-when-it-isn_t-the-phone_s.toml) — owner: mark · priority: low · tags: `gig-detail`, `dates`
 - [Stay on Melbourne when there are no gigs near you](stay-on-melbourne-when-there-are-no-gigs-near-you.toml) — owner: mark · priority: high · tags: `map`, `app-store`
 - [Work on iPad](work-on-ipad.toml) — owner: mark · priority: medium · tags: `ipad`, `ui`
+- [Act pages](act-pages.toml) — owner: mark · priority: medium · tags: `gig-detail`, `acts`
 
 ## Blocked (0)
 

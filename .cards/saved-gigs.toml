@@ -1,0 +1,18 @@
+name = "Saved gigs"
+status = "todo"
+description = """
+The website has a star on the gig page that saves the gig in the browser (localStorage 'savedGigs', src/savedGigs.js in lml_frontend_client); the only effect is a different map pin for venues with saved gigs. There's no list of them.
+
+Work out what saving should do on a phone before building it:
+- a star on the gig page and in list rows, kept on the device
+- a Saved list (upcoming saved gigs, whatever the date range), maybe from a button by the date pill
+- saved venues' pins marked on the map, like the website
+- or instead of / as well as saving: Add to Calendar (EventKit), which people already have reminders for
+- saved gigs that get cancelled or change time: refresh them from api.lml.live/gigs/<id>"""
+created_at = "2026-11-21T07:05:10.859609Z"
+updated_at = "2026-11-21T07:05:10.859609Z"
+tags = [
+    "gig-detail",
+    "saved",
+]
+priority = "low"

@@ -164,6 +164,12 @@ private struct GigSheet: View {
             .navigationDestination(for: Gig.self) { gig in
                 GigDetailView(gig: gig) { model.show(venue: $0) }
             }
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                case let .act(id, name): ActView(id: id, name: name)
+                case let .gig(id): GigLoaderView(id: id) { model.show(venue: $0) }
+                }
+            }
             .overlay {
                 if model.isLoading && model.gigs.isEmpty { ProgressView() }
             }
