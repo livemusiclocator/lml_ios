@@ -24,6 +24,18 @@ enum Night {
         return (startTime < endsAt ? "1" : "0") + startTime
     }
 
+    /// A gig's sets in the order they're played: the evening, then after
+    /// midnight. Sets with no time stay first, in the order they were listed,
+    /// since a lineup's untimed acts are usually the ones it opens with.
+    static func lineup(_ sets: [GigSet]) -> [GigSet] {
+        let untimed = sets.filter { $0.startTime == nil }
+        let timed = sets.filter { $0.startTime != nil }
+            .enumerated()
+            .sorted { (sortKey(startTime: $0.element.startTime), $0.offset) < (sortKey(startTime: $1.element.startTime), $1.offset) }
+            .map(\.element)
+        return untimed + timed
+    }
+
     /// Only the gigs whose night falls in `from...to` (both "YYYY-MM-DD").
     static func gigs(_ gigs: [Gig], from: String, to: String) -> [Gig] {
         gigs.filter { (from...to).contains($0.night) }

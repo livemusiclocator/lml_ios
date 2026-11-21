@@ -2,21 +2,23 @@
 
 # LML iOS
 
-## Todo (2)
+## Todo (3)
 
-- [Show set times in the gig page lineup](show-set-times-in-the-gig-page-lineup.toml) — priority: low · tags: `gig-detail`
 - [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
+- [Work out today from the phone's clock, not Melbourne's](work-out-today-from-the-phone_s-clock_-not-melbourne_s.toml) — priority: low · tags: `dates`
+- [Label gig times with the venue's time zone when it isn't the phone's](label-gig-times-with-the-venue_s-time-zone-when-it-isn_t-the-phone_s.toml) — priority: low · tags: `gig-detail`, `dates`
 
 ## In Progress (0)
 
 _none_
 
-## Done (6)
+## Done (7)
 
 - [Fit the Anywhere map to the gig pins](fit-the-anywhere-map-to-the-gig-pins.toml) — priority: medium · tags: `map`, `explorer`
 - [Sort after-midnight sets at the end of the night](sort-after-midnight-sets-at-the-end-of-the-night.toml) — owner: mark · priority: medium · tags: `explorer`, `dates`
 - [Close the gap at the top of the gig sheet](close-the-gap-at-the-top-of-the-gig-sheet.toml) — owner: mark · priority: low · tags: `explorer`, `ui`
 - [Gig detail page like the JS front end](gig-detail-page-like-the-js-front-end.toml) — owner: mark · priority: high · tags: `gig-detail`, `ui`
+- [Show set times in the gig page lineup](show-set-times-in-the-gig-page-lineup.toml) — owner: mark · priority: low · tags: `gig-detail`
 - [Don't count gigs hidden under the sheet](don_t-count-gigs-hidden-under-the-sheet.toml) — owner: mark · priority: low · tags: `explorer`, `map`
 - [Show me where I am](show-me-where-i-am.toml) — owner: mark · priority: low · tags: `map`
 

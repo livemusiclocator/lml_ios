@@ -17,17 +17,31 @@ enum GigFormat {
     }
 
     /// "10:30 am – 3:00 am", or just the start when the finish isn't known.
+    ///
+    /// From the API's "17:00" style times, which are the venue's own clock
+    /// time. The timestamps would need converting to the venue's time zone:
+    /// Brisbane has no daylight saving, so in summer it's an hour behind
+    /// Melbourne.
     static func times(for gig: Gig) -> String {
-        guard let start = gig.startTimestamp else { return "Start time not listed" }
+        guard let start = gig.startTime.flatMap(clockTime) else { return "Start time not listed" }
+        guard let finish = gig.finishTime.flatMap(clockTime) else { return start }
+        return "\(start) – \(finish)"
+    }
+
+    /// "5:00 pm" from "17:00".
+    private static func clockTime(_ time: String) -> String? {
+        let utc = TimeZone(identifier: "UTC")!
+        let parser = DateFormatter()
+        parser.locale = Locale(identifier: "en_AU_POSIX")
+        parser.timeZone = utc
+        parser.dateFormat = "HH:mm"
+        guard let parsed = parser.date(from: time) else { return nil }
         let formatter = DateFormatter()
         formatter.locale = locale
-        formatter.timeZone = DateRange.melbourne
+        formatter.timeZone = utc
         formatter.dateStyle = .none
         formatter.timeStyle = .short
-        // times only: an interval formatter adds both dates when a gig runs
-        // past midnight, and the date is already on the line above
-        guard let finish = gig.finishTimestamp, finish > start else { return formatter.string(from: start) }
-        return "\(formatter.string(from: start)) – \(formatter.string(from: finish))"
+        return formatter.string(from: parsed)
     }
 
     /// "74-76 Johnston Street Fitzroy · holds 175".

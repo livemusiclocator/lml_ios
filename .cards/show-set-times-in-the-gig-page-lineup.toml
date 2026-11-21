@@ -1,7 +1,8 @@
 name = "Show set times in the gig page lineup"
-status = "todo"
+status = "done"
+owner = "mark"
 description = 'Sets come with start_time (e.g. "22:48" in the fixture), and the lineup row shows them after the act name in mono when present. Most real gigs seem to have none. Check a few gigs that do have set times and make sure they look right next to long act names (truncation).'
 created_at = "2026-11-21T02:53:26.507574Z"
-updated_at = "2026-11-21T02:53:26.507574Z"
+updated_at = "2026-11-21T04:54:46.555030Z"
 tags = ["gig-detail"]
 priority = "low"

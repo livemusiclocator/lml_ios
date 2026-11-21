@@ -21,8 +21,8 @@ struct GigDecodingTests {
     @Test func decodesTheGigPageFields() throws {
         let gig = try #require(try Self.fixture().first { $0.name.hasPrefix("Michael Zammit") })
         #expect(gig.ticketingURL?.host() == "www.hopperssports.com.au")
-        #expect(gig.startTimestamp != nil)
-        #expect(gig.finishTimestamp == nil)
+        #expect(gig.startTime == "11:00")
+        #expect(gig.finishTime == nil)
         #expect(gig.sets.first?.act?.name == "Michael Zammit")
         #expect(gig.sets.first?.startTime == "22:48")
         #expect(gig.prices.map(\.amount) == ["$30.00", "$20.00"])
@@ -32,7 +32,7 @@ struct GigDecodingTests {
     @Test func emptyTicketingURLIsNoURL() throws {
         let gig = try #require(try Self.fixture().first)
         #expect(gig.ticketingURL == nil)
-        #expect(gig.finishTimestamp != nil)
+        #expect(gig.finishTime == "03:00")
         #expect(gig.venue.capacity == 175)
         #expect(gig.venue.locationURL != nil)
     }

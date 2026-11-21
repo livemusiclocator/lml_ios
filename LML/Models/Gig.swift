@@ -16,8 +16,8 @@ struct Gig: Decodable, Identifiable, Hashable, Sendable {
     let genreTags: [String]
     let venue: Venue
     let ticketingURL: URL?
-    let startTimestamp: Date?
-    let finishTimestamp: Date?
+    /// The venue's clock time the gig ends ("03:00"), like `startTime`.
+    let finishTime: String?
     let sets: [GigSet]
     let prices: [Price]
 
@@ -39,8 +39,7 @@ struct Gig: Decodable, Identifiable, Hashable, Sendable {
         case informationTags = "information_tags"
         case genreTags = "genre_tags"
         case ticketingURL = "ticketing_url"
-        case startTimestamp = "start_timestamp"
-        case finishTimestamp = "finish_timestamp"
+        case finishTime = "finish_time"
         case sets, prices
     }
 
@@ -59,8 +58,7 @@ struct Gig: Decodable, Identifiable, Hashable, Sendable {
         venue = try c.decode(Venue.self, forKey: .venue)
         // "" rather than null again
         ticketingURL = try c.decodeIfPresent(String.self, forKey: .ticketingURL).flatMap(URL.init(nonEmpty:))
-        startTimestamp = try c.decodeIfPresent(String.self, forKey: .startTimestamp).flatMap(Timestamp.parse)
-        finishTimestamp = try c.decodeIfPresent(String.self, forKey: .finishTimestamp).flatMap(Timestamp.parse)
+        finishTime = try c.decodeIfPresent(String.self, forKey: .finishTime)
         sets = try c.decodeIfPresent([GigSet].self, forKey: .sets) ?? []
         prices = try c.decodeIfPresent([Price].self, forKey: .prices) ?? []
     }
@@ -86,14 +84,6 @@ struct Price: Decodable, Hashable, Sendable {
     /// Already formatted by the API ("$30.00").
     let amount: String
     let description: String?
-}
-
-/// The API's timestamps carry milliseconds ("2026-11-03T22:47:59.999+11:00").
-enum Timestamp {
-    static func parse(_ string: String) -> Date? {
-        (try? Date(string, strategy: Date.ISO8601FormatStyle(includingFractionalSeconds: true)))
-            ?? (try? Date(string, strategy: .iso8601))
-    }
 }
 
 extension URL {

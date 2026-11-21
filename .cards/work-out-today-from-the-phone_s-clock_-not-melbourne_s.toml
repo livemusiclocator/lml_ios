@@ -1,0 +1,10 @@
+name = "Work out today from the phone's clock, not Melbourne's"
+status = "todo"
+description = """
+DateRange.dates(now:) and the 5am night boundary use Melbourne's time zone (DateRange.melbourne), a rule from when every gig was in Victoria. Now the app fetches everywhere, so for someone in Brisbane in summer, tonight rolls over to tomorrow at 4am their time instead of 5am; further west (Adelaide, Perth) it's worse.
+
+Use the phone's own time zone (TimeZone.current) for 'now', 'today' and the ranges: people want gigs tonight where they are. Gig dates and times stay as the venue's own clock (see Night.swift and GigFormat). Update DateRangeTests, which pin Melbourne."""
+created_at = "2026-11-21T04:56:59.611592Z"
+updated_at = "2026-11-21T04:56:59.611592Z"
+tags = ["dates"]
+priority = "low"

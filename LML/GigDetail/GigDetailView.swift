@@ -96,14 +96,21 @@ struct GigDetailView: View {
                         .font(.caption2.weight(.semibold))
                         .tracking(1.5)
                         .foregroundStyle(Color.inkMuted)
-                    ForEach(Array(gig.sets.enumerated()), id: \.offset) { _, set in
-                        (Text(set.act?.name ?? "TBA").fontWeight(.semibold)
-                            + Text(set.startTime.map { "  \($0)" } ?? "")
-                            .font(.system(.subheadline, design: .monospaced))
-                            .foregroundStyle(Color.inkMuted))
-                            .font(.subheadline)
-                            .lineLimit(1)
-                            .padding(.vertical, 2)
+                    ForEach(Array(Night.lineup(gig.sets).enumerated()), id: \.offset) { _, set in
+                        // the name wraps rather than pushing the time off the end
+                        HStack(alignment: .firstTextBaseline, spacing: 12) {
+                            Text(set.act?.name ?? "TBA")
+                                .fontWeight(.semibold)
+                                .lineLimit(2)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                            if let startTime = set.startTime {
+                                Text(startTime)
+                                    .monospaced()
+                                    .foregroundStyle(Color.inkMuted)
+                            }
+                        }
+                        .font(.subheadline)
+                        .padding(.vertical, 2)
                     }
                 }
             }
