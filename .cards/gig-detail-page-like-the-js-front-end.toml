@@ -1,0 +1,30 @@
+name = "Gig detail page like the JS front end"
+status = "todo"
+description = """
+Tapping a gig in the sheet should push a detail page modelled on lml_frontend_client/src/pages/GigDetails/GigDetails.jsx.
+
+## Layout (top to bottom, as in the JS page)
+- Header: weekday date · start time (pink, mono, uppercase), series badge, gig name (with "(cancelled)" when cancelled), venue name with a pin icon
+- Tickets button: pink, full width, "Tickets from <cheapest price>" or "Tickets", opens ticketing_url; hidden without a URL
+- Raised card of rows, each with an icon:
+  - Clock: full date, then the start-finish time range, or "Start time not listed"
+  - Pin: venue name (links back to the explorer narrowed to that venue), address · holds <capacity>, "Get directions" from location_url (open in Maps)
+  - Mic: LINEUP, sets with act name and start time
+  - Ticket: prices, description (or "Admission") and amount
+- Chips: information tags (neutral) and genre tags (accent)
+- "All gigs at <venue>" row, which selects that venue in the explorer
+- Error state: "Gig not found" with the 404 vs unavailable messages
+
+## Decisions
+- The JS page shows the map through a hole at the top. On iOS, either show the venue's map behind a short hero, or just push a normal page. Decide when building it.
+- Save gig (SaveGigButton) and act pages (/acts/:id) are out of scope; leave them for later cards.
+
+## Model work
+Gig only decodes what the explorer needs. The API payload already includes ticketing_url, start_timestamp, finish_timestamp, description, sets, prices and venue.capacity/website/location_url, so decode those too (the fixture in LMLTests/Fixtures/gigs.json has them) and extend GigDecodingTests. Check whether the JS app fetches a single gig from its own endpoint (useGig in src/hooks/api) or reuses the list data."""
+created_at = "2026-11-21T02:48:54.407973Z"
+updated_at = "2026-11-21T02:48:54.407973Z"
+tags = [
+    "gig-detail",
+    "ui",
+]
+priority = "high"

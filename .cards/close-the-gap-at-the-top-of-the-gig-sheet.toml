@@ -1,0 +1,13 @@
+name = "Close the gap at the top of the gig sheet"
+status = "todo"
+description = """
+There's a big empty band between the "319 gigs" heading and the first day heading ("Saturday 21 November") in the sheet. Probably List/section header insets or the heading being outside the list. Tighten it so the first day sits just under the count.
+
+Code: GigSheet in LML/Explorer/ExplorerView.swift."""
+created_at = "2026-11-21T02:48:54.403170Z"
+updated_at = "2026-11-21T02:48:54.403170Z"
+tags = [
+    "explorer",
+    "ui",
+]
+priority = "low"

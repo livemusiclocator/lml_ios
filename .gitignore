@@ -4,3 +4,5 @@ tmp/
 DerivedData/
 *.xcuserstate
 xcuserdata/
+.cards/.logs/
+.cards/.claims/
