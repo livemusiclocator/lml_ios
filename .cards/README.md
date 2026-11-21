@@ -2,9 +2,8 @@
 
 # LML iOS
 
-## Todo (5)
+## Todo (4)
 
-- [Sort after-midnight sets at the end of the night](sort-after-midnight-sets-at-the-end-of-the-night.toml) — priority: medium · tags: `explorer`, `dates`
 - [Close the gap at the top of the gig sheet](close-the-gap-at-the-top-of-the-gig-sheet.toml) — priority: low · tags: `explorer`, `ui`
 - [Show set times in the gig page lineup](show-set-times-in-the-gig-page-lineup.toml) — priority: low · tags: `gig-detail`
 - [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
@@ -14,9 +13,10 @@
 
 _none_
 
-## Done (3)
+## Done (4)
 
 - [Fit the Anywhere map to the gig pins](fit-the-anywhere-map-to-the-gig-pins.toml) — priority: medium · tags: `map`, `explorer`
+- [Sort after-midnight sets at the end of the night](sort-after-midnight-sets-at-the-end-of-the-night.toml) — owner: claudia · priority: medium · tags: `explorer`, `dates`
 - [Gig detail page like the JS front end](gig-detail-page-like-the-js-front-end.toml) — owner: claudia · priority: high · tags: `gig-detail`, `ui`
 - [Show me where I am](show-me-where-i-am.toml) — owner: claudia · priority: low · tags: `map`
 

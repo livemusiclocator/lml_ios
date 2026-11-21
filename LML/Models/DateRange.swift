@@ -26,10 +26,11 @@ enum DateRange: String, CaseIterable, Identifiable, Sendable {
         return calendar
     }
 
-    /// The first and last day this range covers, as "YYYY-MM-DD".
+    /// The first and last night this range covers, as "YYYY-MM-DD".
     func dates(now: Date = .now) -> (from: String, to: String) {
         let calendar = Self.melbourneCalendar
-        let today = calendar.startOfDay(for: now)
+        let tonight = now.addingTimeInterval(-Double(Night.endsAtHour) * 3600)
+        let today = calendar.startOfDay(for: tonight)
         let day = { (offset: Int, from: Date) in calendar.date(byAdding: .day, value: offset, to: from)! }
         // iso8601 calendar: weekday 2 is Monday ... 1 is Sunday
         let weekday = calendar.component(.weekday, from: today)

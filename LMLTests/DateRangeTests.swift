@@ -7,8 +7,11 @@ struct DateRangeTests {
     /// Tuesday 3 November 2026, 11pm in Melbourne.
     static let tuesdayNight = ISO8601DateFormatter().date(from: "2026-11-03T23:00:00+11:00")!
 
-    /// 12:30am Wednesday in Melbourne is still Tuesday in UTC - the app must
-    /// use Melbourne's day, like the website does.
+    /// 9am Wednesday in Melbourne is still Tuesday in UTC - the app must use
+    /// Melbourne's day, like the website does.
+    static let wednesdayMorning = ISO8601DateFormatter().date(from: "2026-11-04T09:00:00+11:00")!
+
+    /// 12:30am Wednesday in Melbourne: Tuesday night is still going.
     static let justAfterMidnight = ISO8601DateFormatter().date(from: "2026-11-04T00:30:00+11:00")!
 
     @Test(arguments: [
@@ -25,7 +28,11 @@ struct DateRangeTests {
     }
 
     @Test func todayIsMelbournesDay() {
-        #expect(DateRange.today.dates(now: Self.justAfterMidnight).from == "2026-11-04")
+        #expect(DateRange.today.dates(now: Self.wednesdayMorning).from == "2026-11-04")
+    }
+
+    @Test func afterMidnightTodayIsStillLastNight() {
+        #expect(DateRange.today.dates(now: Self.justAfterMidnight).from == "2026-11-03")
     }
 
     @Test func thisWeekOnSundayIsJustSunday() {

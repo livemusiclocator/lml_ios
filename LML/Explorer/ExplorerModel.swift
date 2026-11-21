@@ -71,11 +71,11 @@ final class ExplorerModel {
         return gigs.filter { $0.venue.coordinate.map(visibleRegion.contains) ?? false }
     }
 
-    /// The sheet's gigs, grouped under a heading per day.
+    /// The sheet's gigs, grouped under a heading per night.
     var days: [(date: String, gigs: [Gig])] {
-        let byDate = Dictionary(grouping: shownGigs, by: \.date)
-        return byDate.keys.sorted().map { date in
-            (date, byDate[date]!.sorted { ($0.startTime ?? "99") < ($1.startTime ?? "99") })
+        let byNight = Dictionary(grouping: shownGigs, by: \.night)
+        return byNight.keys.sorted().map { night in
+            (night, byNight[night]!.sorted { Night.sortKey(startTime: $0.startTime) < Night.sortKey(startTime: $1.startTime) })
         }
     }
 }

@@ -5,10 +5,13 @@ struct GigsAPI: Sendable {
     var baseURL = URL(string: "https://api.lml.live/gigs")!
     var session: URLSession = .shared
 
-    /// Every location's gigs in the range. The website asks for one volunteer
-    /// group's location at a time; the app lets the map do that job.
+    /// Every location's gigs on the range's nights. The website asks for one
+    /// volunteer group's location at a time; the app lets the map do that job.
     func gigs(range: DateRange, now: Date = .now) async throws -> [Gig] {
-        let dates = range.dates(now: now)
+        let nights = range.dates(now: now)
+        // the API dates gigs by the day they start, so the last night's
+        // after-midnight sets are dated the day after the range
+        let dates = (from: nights.from, to: Night.nextDay(nights.to) ?? nights.to)
         var components = URLComponents(url: baseURL.appending(path: "query"), resolvingAgainstBaseURL: false)!
         components.queryItems = [
             URLQueryItem(name: "location", value: "anywhere"),
@@ -19,6 +22,8 @@ struct GigsAPI: Sendable {
         if let http = response as? HTTPURLResponse, !(200..<300).contains(http.statusCode) {
             throw URLError(.badServerResponse)
         }
-        return try JSONDecoder().decode([Gig].self, from: data)
+        let gigs = try JSONDecoder().decode([Gig].self, from: data)
+        // and the first day's after-midnight sets belong to the night before it
+        return Night.gigs(gigs, from: nights.from, to: nights.to)
     }
 }
