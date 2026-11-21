@@ -98,17 +98,29 @@ private struct GigSheet: View {
                     Text(model.gigs.isEmpty ? "No gigs \(model.range.caption.lowercased())." : "No gigs on this part of the map \(model.range.caption.lowercased()).").foregroundStyle(Color.inkMuted)
                 }
                 ForEach(model.days, id: \.date) { day in
-                    Section(DayHeading.text(for: day.date)) {
+                    Section {
                         ForEach(day.gigs) { gig in
                             NavigationLink(value: gig) {
                                 GigRow(gig: gig, showVenue: model.selectedVenueID == nil)
                             }
                         }
+                    } header: {
+                        Text(DayHeading.text(for: day.date))
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(Color.inkMuted)
+                            .padding(.vertical, 6)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .listRowInsets(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                            .background(Color.night)
                     }
                 }
                 .listRowBackground(Color.night)
             }
             .listStyle(.plain)
+            // the first day straight under the count, not a row's height below it
+            .listSectionSpacing(0)
+            .contentMargins(.top, 0, for: .scrollContent)
+            .environment(\.defaultMinListHeaderHeight, 0)
             .scrollContentBackground(.hidden)
             .refreshable { await model.load() }
             .navigationDestination(for: Gig.self) { gig in
