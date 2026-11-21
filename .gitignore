@@ -7,3 +7,4 @@ xcuserdata/
 .cards/.logs/
 .cards/.claims/
 .DS_Store
+Config/Signing.local.xcconfig

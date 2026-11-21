@@ -1,0 +1,5 @@
+// Copy to Signing.local.xcconfig (ignored by git), fill in, then run
+// `xcodegen generate`. See Signing.xcconfig for what each setting does.
+
+DEVELOPMENT_TEAM = ABCDE12345
+LML_BUNDLE_ID = au.com.livemusiclocator.app.yourname

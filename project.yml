@@ -4,11 +4,12 @@ options:
   deploymentTarget:
     iOS: "18.0"
   createIntermediateGroups: true
+configFiles:
+  Debug: Config/Signing.xcconfig
+  Release: Config/Signing.xcconfig
 settings:
   base:
     SWIFT_VERSION: "6.0"
-    DEVELOPMENT_TEAM: KP8KF4FKHT
-    CODE_SIGN_STYLE: Automatic
 targets:
   LML:
     type: application
@@ -16,7 +17,7 @@ targets:
     sources: [LML]
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: au.com.livemusiclocator.app
+        PRODUCT_BUNDLE_IDENTIFIER: $(LML_BUNDLE_ID)
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: Live Music Locator

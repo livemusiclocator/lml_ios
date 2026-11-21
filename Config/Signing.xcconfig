@@ -1,0 +1,16 @@
+// Who signs the app for running on a phone. The simulator needs none of this.
+//
+// Don't edit this file: copy Signing.local.example.xcconfig to
+// Signing.local.xcconfig (ignored by git) and put your own values there.
+
+// your Apple developer team ID (Xcode > Settings > Accounts, or
+// developer.apple.com > Membership); empty means no phone builds
+DEVELOPMENT_TEAM =
+
+// a bundle ID belongs to the team that first registered it, so anyone
+// outside that team needs one of their own
+LML_BUNDLE_ID = au.com.livemusiclocator.app
+
+CODE_SIGN_STYLE = Automatic
+
+#include? "Signing.local.xcconfig"
