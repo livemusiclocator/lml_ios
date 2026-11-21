@@ -117,13 +117,32 @@ private struct GigSheet: View {
             .overlay {
                 if model.isLoading && model.gigs.isEmpty { ProgressView() }
             }
+            // the toolbar's title item draws the title; this is for VoiceOver
             .navigationTitle(model.selectedVenue?.name ?? "\(model.shownGigs.count) gigs")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
+                ToolbarItem(placement: .principal) { title }
                 if model.selectedVenue != nil {
-                    Button("Show all", systemImage: "xmark.circle.fill") { model.selectedVenueID = nil }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Show all", systemImage: "xmark.circle.fill") { model.selectedVenueID = nil }
+                    }
                 }
             }
+        }
+    }
+
+    /// The count rolls from one number to the next, like an odometer, as the
+    /// map moves and the sheet is dragged.
+    @ViewBuilder private var title: some View {
+        if let venue = model.selectedVenue {
+            Text(venue.name).font(.headline).lineLimit(1)
+        } else {
+            let count = model.shownGigs.count
+            Text("\(count) \(count == 1 ? "gig" : "gigs")")
+                .font(.headline)
+                .monospacedDigit()
+                .contentTransition(.numericText(value: Double(count)))
+                .animation(.snappy, value: count)
         }
     }
 }
