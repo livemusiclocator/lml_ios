@@ -9,6 +9,8 @@ struct GigDetailView: View {
     var showVenue: (Venue) -> Void = { _ in }
     var api = GigsAPI()
 
+    @Environment(SavedGigs.self) private var saved
+
     /// The lineup's acts that have more than a name, so get a page.
     @State private var actsWorthAPage: Set<String> = []
 
@@ -28,6 +30,18 @@ struct GigDetailView: View {
         .foregroundStyle(Color.ink)
         .navigationBarTitleDisplayMode(.inline)
         .task(id: gig.id) { await findActsWorthAPage() }
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                let isSaved = saved.contains(gig)
+                Button {
+                    saved.toggle(gig)
+                } label: {
+                    Image(systemName: isSaved ? "star.fill" : "star")
+                        .foregroundStyle(Color.lmlPinkLight)
+                }
+                .accessibilityLabel(isSaved ? "Remove from saved" : "Save this gig")
+            }
+        }
     }
 
     private func findActsWorthAPage() async {

@@ -4,6 +4,7 @@ import SwiftUI
 struct GigRow: View {
     let gig: Gig
     var showVenue = true
+    var isSaved = false
 
     private var secondary: String {
         ([showVenue ? gig.venue.name : nil] + gig.genreTags.prefix(3).map(Optional.some))
@@ -36,6 +37,12 @@ struct GigRow: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            if isSaved {
+                Image(systemName: "star.fill")
+                    .font(.caption2)
+                    .foregroundStyle(Color.lmlPinkLight)
+                    .accessibilityLabel("Saved")
+            }
             if gig.isFree {
                 Badge(text: "Free", filled: false)
             }

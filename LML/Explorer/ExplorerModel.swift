@@ -8,13 +8,14 @@ import SwiftUI
 ///
 /// Every gig in the date range is fetched at once, so the map always has every
 /// pin. The sheet lists the gigs on the part of the map in view, or one venue's
-/// gigs when a pin is selected.
+/// gigs when a pin is selected. Or, for Saved, the starred gigs, wherever they
+/// are.
 @MainActor
 @Observable
 final class ExplorerModel {
     /// The part of the map in view, once the map has reported it.
     var visibleRegion: MKCoordinateRegion?
-    var range: DateRange = .thisWeek
+    var showing: Showing = .dates(.thisWeek)
     var selectedVenueID: Venue.ID?
     /// The gig pages pushed over the sheet's list.
     var path = NavigationPath()
@@ -26,9 +27,11 @@ final class ExplorerModel {
     private(set) var error: String?
 
     private let api: GigsAPI
+    let saved: SavedGigs
 
-    init(api: GigsAPI = GigsAPI()) {
+    init(api: GigsAPI = GigsAPI(), saved: SavedGigs) {
         self.api = api
+        self.saved = saved
     }
 
     func load() async {
@@ -36,7 +39,10 @@ final class ExplorerModel {
         error = nil
         defer { isLoading = false }
         do {
-            gigs = try await api.gigs(range: range)
+            switch showing {
+            case let .dates(range): gigs = try await api.gigs(range: range)
+            case .saved: gigs = try await loadSaved()
+            }
             hasLoaded = true
             if let selectedVenueID, !venues.contains(where: { $0.id == selectedVenueID }) {
                 self.selectedVenueID = nil
@@ -46,6 +52,29 @@ final class ExplorerModel {
         } catch {
             self.error = "Couldn't load gigs. Pull to try again."
         }
+    }
+
+    /// The saved gigs, fresh from the API: still upcoming, soonest first.
+    /// Gigs the API no longer has are forgotten.
+    private func loadSaved() async throws -> [Gig] {
+        let ids = saved.ids
+        let api = self.api
+        var fetched: [Gig] = []
+        var gone: [String] = []
+        try await withThrowingTaskGroup(of: (String, Gig?).self) { group in
+            for id in ids {
+                group.addTask {
+                    do { return (id, try await api.gig(id: id)) } catch is GigsAPI.NotFound { return (id, nil) }
+                }
+            }
+            for try await (id, gig) in group {
+                if let gig { fetched.append(gig) } else { gone.append(id) }
+            }
+        }
+        gone.forEach(saved.remove(id:))
+        fetched.forEach(saved.update(from:))
+        let tonight = DateRange.today.dates().from
+        return fetched.filter { $0.night >= tonight }
     }
 
     /// Back to the list, narrowed to one venue's gigs.
@@ -71,6 +100,9 @@ final class ExplorerModel {
         if let selectedVenueID {
             return gigs.filter { $0.venue.id == selectedVenueID }
         }
+        // the Saved list is every saved gig, on the map in view or not; one
+        // unstarred since it loaded drops out straight away
+        if showing == .saved { return gigs.filter { saved.ids.contains($0.id) } }
         guard let visibleRegion else { return gigs }
         return gigs.filter { $0.venue.coordinate.map(visibleRegion.contains) ?? false }
     }
@@ -88,5 +120,18 @@ extension MKCoordinateRegion {
     func contains(_ coordinate: CLLocationCoordinate2D) -> Bool {
         abs(coordinate.latitude - center.latitude) <= span.latitudeDelta / 2
             && abs(coordinate.longitude - center.longitude) <= span.longitudeDelta / 2
+    }
+}
+
+/// What the explorer lists: a range of nights, or the saved gigs.
+enum Showing: Hashable, Sendable {
+    case dates(DateRange)
+    case saved
+
+    var caption: String {
+        switch self {
+        case let .dates(range): range.caption
+        case .saved: "Saved"
+        }
     }
 }

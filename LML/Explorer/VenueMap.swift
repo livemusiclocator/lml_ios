@@ -5,6 +5,8 @@ import SwiftUI
 /// only MKMapView groups nearby pins into one numbered pin when zoomed out.
 struct VenueMap: UIViewRepresentable {
     let venues: [Venue]
+    /// Venues with a saved gig, whose pins get a star.
+    var savedVenueIDs: Set<String> = []
     @Binding var selectedVenueID: Venue.ID?
     let initialRegion: MKCoordinateRegion
     /// Bumped by the locate button; each new value jumps to the person.
@@ -50,6 +52,12 @@ struct VenueMap: UIViewRepresentable {
         }
         syncAnnotations(on: map)
         syncSelection(on: map)
+        if savedVenueIDs != context.coordinator.lastSavedVenueIDs {
+            context.coordinator.lastSavedVenueIDs = savedVenueIDs
+            for case let annotation as VenueAnnotation in map.annotations {
+                (map.view(for: annotation) as? VenueMarker)?.isSaved = savedVenueIDs.contains(annotation.venue.id)
+            }
+        }
         context.coordinator.jumpToUserIfWanted(on: map)
     }
 
@@ -147,7 +155,15 @@ struct VenueMap: UIViewRepresentable {
 
         func mapView(_ map: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
             // the standard blue dot, not a venue pin that could be grouped
-            annotation is MKUserLocation ? nil : map.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier, for: annotation)
+            if annotation is MKUserLocation { return nil }
+            if annotation is MKClusterAnnotation {
+                return map.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultClusterAnnotationViewReuseIdentifier, for: annotation)
+            }
+            let view = map.dequeueReusableAnnotationView(withIdentifier: MKMapViewDefaultAnnotationViewReuseIdentifier, for: annotation)
+            if let marker = view as? VenueMarker, let venue = annotation as? VenueAnnotation {
+                marker.isSaved = parent.savedVenueIDs.contains(venue.venue.id)
+            }
+            return view
         }
 
         func mapView(_ map: MKMapView, didAdd views: [MKAnnotationView]) {
@@ -162,6 +178,7 @@ struct VenueMap: UIViewRepresentable {
         }
 
         var lastCovered: UIEdgeInsets?
+        var lastSavedVenueIDs: Set<String> = []
 
         /// Centres the person in the part of the map not under the sheet or
         /// panel, where they can be seen.
@@ -228,6 +245,11 @@ private final class VenueMarker: MKMarkerAnnotationView {
     }
 
     required init?(coder: NSCoder) { fatalError("not used") }
+
+    /// A star instead of a note on venues with a saved gig.
+    var isSaved = false {
+        didSet { glyphImage = UIImage(systemName: isSaved ? "star.fill" : "music.note") }
+    }
 
     override func prepareForReuse() {
         super.prepareForReuse()

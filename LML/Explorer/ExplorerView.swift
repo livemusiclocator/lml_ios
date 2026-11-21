@@ -9,7 +9,7 @@ import SwiftUI
 /// the bottom of the map. In wide ones (iPad) it's a panel down the side, so
 /// the map stays in view while you read a gig.
 struct ExplorerView: View {
-    @State private var model = ExplorerModel()
+    @State private var model = ExplorerModel(saved: SavedGigs())
     @Environment(\.horizontalSizeClass) private var sizeClass
     private var isWide: Bool { sizeClass == .regular }
     static let panelWidth: CGFloat = 380
@@ -27,6 +27,7 @@ struct ExplorerView: View {
     var body: some View {
         VenueMap(
             venues: model.venues,
+            savedVenueIDs: model.saved.venueIDs,
             selectedVenueID: $model.selectedVenueID,
             initialRegion: Self.metroMelbourne,
             locateRequest: locateRequest,
@@ -47,13 +48,14 @@ struct ExplorerView: View {
         }
         .sheet(isPresented: .constant(!isWide)) {
             GigSheet(model: model)
+                .environment(model.saved)
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { sheetTop = $0 }
                 .presentationDetents([Self.collapsed, .fraction(0.4), .large], selection: $detent)
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.4)))
                 .presentationBackground(Color.night)
                 .interactiveDismissDisabled()
         }
-        .task(id: model.range) {
+        .task(id: model.showing) {
             await model.load()
         }
         .onChange(of: model.selectedVenueID) { _, id in
@@ -68,6 +70,7 @@ struct ExplorerView: View {
     /// The gig list beside the map, for wide windows.
     private var panel: some View {
         GigSheet(model: model)
+            .environment(model.saved)
             .frame(width: Self.panelWidth)
             .background(Color.night)
             .clipShape(.rect(cornerRadius: 24))
@@ -87,12 +90,15 @@ struct ExplorerView: View {
 
     private var datePicker: some View {
         Menu {
-            Picker("When", selection: $model.range) {
-                ForEach(DateRange.allCases) { Text($0.caption).tag($0) }
+            Picker("When", selection: $model.showing) {
+                ForEach(DateRange.allCases) { Text($0.caption).tag(Showing.dates($0)) }
+                Divider()
+                Label("Saved", systemImage: "star").tag(Showing.saved)
             }
         } label: {
             HStack(spacing: 4) {
-                Text(model.range.caption)
+                if model.showing == .saved { Image(systemName: "star.fill").font(.caption) }
+                Text(model.showing.caption)
                 Image(systemName: "chevron.down").font(.caption2)
             }
             .font(.subheadline.bold())
@@ -102,7 +108,7 @@ struct ExplorerView: View {
             .background(Color.lmlPink, in: .capsule)
             .shadow(color: .black.opacity(0.4), radius: 6, y: 2)
         }
-        .accessibilityLabel("Choose dates: \(model.range.caption)")
+        .accessibilityLabel("Choose dates: \(model.showing.caption)")
     }
 
     private var locateButton: some View {
@@ -133,13 +139,13 @@ private struct GigSheet: View {
                 if let error = model.error {
                     Text(error).foregroundStyle(Color.inkMuted)
                 } else if !model.isLoading && model.days.isEmpty {
-                    Text(model.gigs.isEmpty ? "No gigs \(model.range.caption.lowercased())." : "No gigs on this part of the map \(model.range.caption.lowercased()).").foregroundStyle(Color.inkMuted)
+                    Text(emptyMessage).foregroundStyle(Color.inkMuted)
                 }
                 ForEach(model.days, id: \.date) { day in
                     Section {
                         ForEach(day.gigs) { gig in
                             NavigationLink(value: gig) {
-                                GigRow(gig: gig, showVenue: model.selectedVenueID == nil)
+                                GigRow(gig: gig, showVenue: model.selectedVenueID == nil, isSaved: model.saved.contains(gig))
                             }
                         }
                     } header: {
@@ -187,6 +193,14 @@ private struct GigSheet: View {
         }
     }
 
+    private var emptyMessage: String {
+        switch model.showing {
+        case .saved: "No saved gigs coming up. Tap ☆ on a gig to save it."
+        case let .dates(range) where model.gigs.isEmpty: "No gigs \(range.caption.lowercased())."
+        case let .dates(range): "No gigs on this part of the map \(range.caption.lowercased())."
+        }
+    }
+
     /// The count rolls from one number to the next, like an odometer, as the
     /// map moves and the sheet is dragged.
     @ViewBuilder private var title: some View {
@@ -194,7 +208,7 @@ private struct GigSheet: View {
             Text(venue.name).font(.headline).lineLimit(1)
         } else {
             let count = model.shownGigs.count
-            Text("\(count) \(count == 1 ? "gig" : "gigs")")
+            Text("\(count) \(model.showing == .saved ? "saved" : "") \(count == 1 ? "gig" : "gigs")".replacingOccurrences(of: "  ", with: " "))
                 .font(.headline)
                 .monospacedDigit()
                 .contentTransition(.numericText(value: Double(count)))
