@@ -2,10 +2,9 @@
 
 # LML iOS
 
-## Todo (4)
+## Todo (3)
 
 - [Act pages and saved gigs](act-pages-and-saved-gigs.toml) — priority: low · tags: `gig-detail`
-- [Work out today from the phone's clock, not Melbourne's](work-out-today-from-the-phone_s-clock_-not-melbourne_s.toml) — priority: low · tags: `dates`
 - [Label gig times with the venue's time zone when it isn't the phone's](label-gig-times-with-the-venue_s-time-zone-when-it-isn_t-the-phone_s.toml) — priority: low · tags: `gig-detail`, `dates`
 - [Filters that work with hundreds of tags](filters-that-work-with-hundreds-of-tags.toml) — priority: medium · tags: `filters`, `explorer`
 
@@ -13,7 +12,7 @@
 
 _none_
 
-## Done (7)
+## Done (8)
 
 - [Fit the Anywhere map to the gig pins](fit-the-anywhere-map-to-the-gig-pins.toml) — priority: medium · tags: `map`, `explorer`
 - [Sort after-midnight sets at the end of the night](sort-after-midnight-sets-at-the-end-of-the-night.toml) — owner: mark · priority: medium · tags: `explorer`, `dates`
@@ -22,6 +21,7 @@ _none_
 - [Show set times in the gig page lineup](show-set-times-in-the-gig-page-lineup.toml) — owner: mark · priority: low · tags: `gig-detail`
 - [Don't count gigs hidden under the sheet](don_t-count-gigs-hidden-under-the-sheet.toml) — owner: mark · priority: low · tags: `explorer`, `map`
 - [Show me where I am](show-me-where-i-am.toml) — owner: mark · priority: low · tags: `map`
+- [Work out today from the phone's clock, not Melbourne's](work-out-today-from-the-phone_s-clock_-not-melbourne_s.toml) — owner: mark · priority: low · tags: `dates`
 
 ## Blocked (0)
 
