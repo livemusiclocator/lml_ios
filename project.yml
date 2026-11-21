@@ -23,7 +23,9 @@ targets:
         INFOPLIST_KEY_CFBundleDisplayName: LML
         INFOPLIST_KEY_NSLocationWhenInUseUsageDescription: To show the gigs near you.
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
+        # the phone is portrait; the iPad goes any way up, which iPad multitasking needs
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: UIInterfaceOrientationPortrait
+        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UIUserInterfaceStyle: Dark
   LMLTests:
     type: bundle.unit-test

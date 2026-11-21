@@ -1,11 +1,21 @@
 import MapKit
 import SwiftUI
 
-/// The map of venues with the gig list in a sheet over it, like the website's
-/// explorer. The sheet lists the gigs on the part of the map in view; tapping
-/// a pin narrows it to that venue's gigs.
+/// The map of venues with the gig list over it, like the website's explorer.
+/// The list shows the gigs on the part of the map in view; tapping a pin
+/// narrows it to that venue's gigs.
+///
+/// In narrow windows (every iPhone, iPad Slide Over) the list is a sheet over
+/// the bottom of the map. In wide ones (iPad) it's a panel down the side, so
+/// the map stays in view while you read a gig.
 struct ExplorerView: View {
     @State private var model = ExplorerModel()
+    @Environment(\.horizontalSizeClass) private var sizeClass
+    private var isWide: Bool { sizeClass == .regular }
+    static let panelWidth: CGFloat = 380
+    static let panelMargin: CGFloat = 16
+    /// Where the bottom of the map is on screen, to compare with the sheet's top.
+    @State private var mapBottom: CGFloat = 0
     /// The sheet's smallest height: just the grabber and the gig count, leaving
     /// the rest of the screen to the map.
     static let collapsed = PresentationDetent.height(64)
@@ -21,9 +31,13 @@ struct ExplorerView: View {
             initialRegion: Self.metroMelbourne,
             locateRequest: locateRequest,
             venuesLoaded: model.hasLoaded,
-            visibleBottom: sheetTop
+            covered: covered
         ) { model.visibleRegion = $0 }
         .ignoresSafeArea()
+        .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).maxY } action: { mapBottom = $0 }
+        .overlay(alignment: .leading) {
+            if isWide { panel }
+        }
         .overlay(alignment: .topTrailing) {
             VStack(alignment: .trailing, spacing: 12) {
                 datePicker
@@ -31,7 +45,7 @@ struct ExplorerView: View {
             }
             .padding()
         }
-        .sheet(isPresented: .constant(true)) {
+        .sheet(isPresented: .constant(!isWide)) {
             GigSheet(model: model)
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { sheetTop = $0 }
                 .presentationDetents([Self.collapsed, .fraction(0.4), .large], selection: $detent)
@@ -49,6 +63,26 @@ struct ExplorerView: View {
             withAnimation { detent = isEmpty ? .fraction(0.4) : .large }
         }
         .preferredColorScheme(.dark)
+    }
+
+    /// The gig list beside the map, for wide windows.
+    private var panel: some View {
+        GigSheet(model: model)
+            .frame(width: Self.panelWidth)
+            .background(Color.night)
+            .clipShape(.rect(cornerRadius: 24))
+            .shadow(color: .black.opacity(0.4), radius: 12, y: 4)
+            .padding(Self.panelMargin)
+    }
+
+    /// The edges of the map the list covers: the side for the panel, the
+    /// bottom for the sheet.
+    private var covered: UIEdgeInsets {
+        if isWide {
+            return UIEdgeInsets(top: 0, left: Self.panelWidth + Self.panelMargin * 2, bottom: 0, right: 0)
+        }
+        guard let sheetTop, mapBottom > 0 else { return .zero }
+        return UIEdgeInsets(top: 0, left: 0, bottom: max(0, mapBottom - sheetTop), right: 0)
     }
 
     private var datePicker: some View {

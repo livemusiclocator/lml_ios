@@ -11,9 +11,9 @@ struct VenueMap: UIViewRepresentable {
     var locateRequest = 0
     /// Whether `venues` is the loaded list yet, rather than empty for now.
     var venuesLoaded = false
-    /// How far down the screen the map can be seen: the top of the gig sheet.
-    /// Pins below it are hidden, so they aren't in the visible region.
-    var visibleBottom: CGFloat?
+    /// How much of each edge of the map the gig sheet or panel covers. Pins
+    /// under it are hidden, so they aren't in the visible region.
+    var covered = UIEdgeInsets.zero
     /// The part of the map that can be seen, whenever it comes to rest after a
     /// pan or zoom, or the sheet moves.
     var onRegionChange: (MKCoordinateRegion) -> Void = { _ in }
@@ -41,8 +41,11 @@ struct VenueMap: UIViewRepresentable {
             context.coordinator.lastLocateRequest = locateRequest
             context.coordinator.locate(on: map)
         }
-        if visibleBottom != context.coordinator.lastVisibleBottom {
-            context.coordinator.lastVisibleBottom = visibleBottom
+        if covered != context.coordinator.lastCovered {
+            context.coordinator.lastCovered = covered
+            // keeps the Maps logo and Legal link (which must stay visible) out
+            // from under the sheet or panel
+            map.layoutMargins = covered
             context.coordinator.reportVisibleRegion(of: map)
         }
         syncAnnotations(on: map)
@@ -66,12 +69,17 @@ struct VenueMap: UIViewRepresentable {
         }
     }
 
-    /// A few suburbs around the person, with them in the part of the map above
-    /// the sheet rather than in the middle of the screen, where it would hide them.
-    static func region(around coordinate: CLLocationCoordinate2D) -> MKCoordinateRegion {
-        let span = MKCoordinateSpan(latitudeDelta: 0.06, longitudeDelta: 0.06)
-        let center = CLLocationCoordinate2D(latitude: coordinate.latitude - span.latitudeDelta * 0.2, longitude: coordinate.longitude)
-        return MKCoordinateRegion(center: center, span: span)
+    /// A few suburbs around the person, as a map rect.
+    nonisolated static func rect(around coordinate: CLLocationCoordinate2D) -> MKMapRect {
+        let half = 0.03
+        let corners = [
+            MKMapPoint(CLLocationCoordinate2D(latitude: coordinate.latitude + half, longitude: coordinate.longitude - half)),
+            MKMapPoint(CLLocationCoordinate2D(latitude: coordinate.latitude - half, longitude: coordinate.longitude + half)),
+        ]
+        return MKMapRect(
+            x: corners[0].x, y: corners[0].y,
+            width: corners[1].x - corners[0].x, height: corners[1].y - corners[0].y
+        )
     }
 
     private func syncAnnotations(on map: MKMapView) {
@@ -114,7 +122,7 @@ struct VenueMap: UIViewRepresentable {
 
         func locate(on map: MKMapView) {
             if let location = map.userLocation.location {
-                map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
+                show(around: location.coordinate, on: map)
             } else {
                 // no fix yet (or no permission): jump when one arrives
                 jumpWhenLocated = true
@@ -127,14 +135,14 @@ struct VenueMap: UIViewRepresentable {
             if jumpWhenLocated {
                 jumpWhenLocated = false
                 awaitingFirstJump = false
-                map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
+                show(around: location.coordinate, on: map)
                 return
             }
             guard awaitingFirstJump, parent.venuesLoaded else { return }
             awaitingFirstJump = false
             // nowhere near any gigs (another state, or overseas): stay on Melbourne
             guard VenueMap.hasVenues(near: location.coordinate, in: parent.venues) else { return }
-            map.setRegion(VenueMap.region(around: location.coordinate), animated: true)
+            show(around: location.coordinate, on: map)
         }
 
         func mapView(_ map: MKMapView, viewFor annotation: any MKAnnotation) -> MKAnnotationView? {
@@ -153,7 +161,14 @@ struct VenueMap: UIViewRepresentable {
             jumpToUserIfWanted(on: map)
         }
 
-        var lastVisibleBottom: CGFloat?
+        var lastCovered: UIEdgeInsets?
+
+        /// Centres the person in the part of the map not under the sheet or
+        /// panel, where they can be seen.
+        func show(around coordinate: CLLocationCoordinate2D, on map: MKMapView) {
+            // the map's layout margins already keep it clear of what's covered
+            map.setVisibleMapRect(VenueMap.rect(around: coordinate), animated: true)
+        }
 
         func mapView(_ map: MKMapView, regionDidChangeAnimated animated: Bool) {
             reportVisibleRegion(of: map)
@@ -162,10 +177,9 @@ struct VenueMap: UIViewRepresentable {
         /// The map above the sheet. Nothing is reported when the sheet covers
         /// (nearly) all of it: the list stays as it was until the map is back.
         func reportVisibleRegion(of map: MKMapView) {
-            let bounds = map.bounds
-            let height = min(bounds.height, parent.visibleBottom ?? bounds.height)
-            guard bounds.width > 0, height > 80 else { return }
-            let region = map.convert(CGRect(x: 0, y: 0, width: bounds.width, height: height), toRegionFrom: map)
+            let visible = map.bounds.inset(by: parent.covered)
+            guard visible.width > 80, visible.height > 80 else { return }
+            let region = map.convert(visible, toRegionFrom: map)
             // not while SwiftUI is updating the view
             Task { @MainActor in self.parent.onRegionChange(region) }
         }
