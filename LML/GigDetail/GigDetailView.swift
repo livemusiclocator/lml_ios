@@ -67,7 +67,9 @@ struct GigDetailView: View {
         VStack(spacing: 0) {
             DetailRow(icon: "clock") {
                 Text(GigFormat.fullDate(for: gig)).font(.subheadline.weight(.semibold))
-                Text(GigFormat.times(for: gig)).font(.caption).foregroundStyle(Color.inkMuted)
+                Text([GigFormat.times(for: gig), GigFormat.timeZoneNote(for: gig)].compactMap { $0 }.joined(separator: " · "))
+                    .font(.caption)
+                    .foregroundStyle(Color.inkMuted)
             }
             Divider().overlay(Color.nightLine)
             DetailRow(icon: "mappin.and.ellipse") {

@@ -97,13 +97,14 @@ struct Venue: Decodable, Identifiable, Hashable, Sendable {
     let id: String
     let name: String
     let address: String?
+    let postcode: String?
     let capacity: Int?
     let locationURL: URL?
     let latitude: Double?
     let longitude: Double?
 
     enum CodingKeys: String, CodingKey {
-        case id, name, address, capacity, latitude, longitude
+        case id, name, address, postcode, capacity, latitude, longitude
         case locationURL = "location_url"
     }
 
@@ -112,6 +113,7 @@ struct Venue: Decodable, Identifiable, Hashable, Sendable {
         id = try c.decode(String.self, forKey: .id)
         name = try c.decode(String.self, forKey: .name)
         address = try c.decodeIfPresent(String.self, forKey: .address)
+        postcode = try c.decodeIfPresent(String.self, forKey: .postcode)
         capacity = try c.decodeIfPresent(Int.self, forKey: .capacity)
         locationURL = try c.decodeIfPresent(String.self, forKey: .locationURL).flatMap(URL.init(nonEmpty:))
         latitude = try c.decodeIfPresent(Double.self, forKey: .latitude)

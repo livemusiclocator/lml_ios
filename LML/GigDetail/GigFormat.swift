@@ -28,6 +28,24 @@ enum GigFormat {
         return "\(start) – \(finish)"
     }
 
+    /// "Brisbane time" when the venue's clock differs from the phone's on the
+    /// gig's date, so nobody wonders whether the times were converted. Nothing
+    /// when they agree: Melbourne and Brisbane only differ in daylight saving.
+    static func timeZoneNote(for gig: Gig, phone: TimeZone = .current) -> String? {
+        guard let state = AustralianState(venue: gig.venue) else { return nil }
+        var calendar = Calendar(identifier: .iso8601)
+        calendar.timeZone = state.timeZone
+        let parser = DateFormatter()
+        parser.calendar = calendar
+        parser.timeZone = state.timeZone
+        parser.locale = Locale(identifier: "en_AU_POSIX")
+        parser.dateFormat = "yyyy-MM-dd HH:mm"
+        guard let moment = parser.date(from: "\(gig.date) \(gig.startTime ?? "20:00")"),
+              state.timeZone.secondsFromGMT(for: moment) != phone.secondsFromGMT(for: moment)
+        else { return nil }
+        return "\(state.city) time"
+    }
+
     /// "5:00 pm" from "17:00".
     private static func clockTime(_ time: String) -> String? {
         let utc = TimeZone(identifier: "UTC")!

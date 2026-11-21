@@ -1,11 +1,12 @@
 name = "Label gig times with the venue's time zone when it isn't the phone's"
-status = "todo"
+status = "done"
+owner = "mark"
 description = """
 Gig pages show the venue's own clock time (start_time/finish_time), which is right: you're probably planning to be there. But when the venue is in a different zone from the phone, say so, so nobody wonders whether it's been converted (Facebook converts without saying, which is confusing for gig research).
 
 e.g. '5:00 pm – 3:00 am · Brisbane time', shown only when the zones differ. The venue's UTC offset is in start_timestamp (+10:00); naming the place needs a small offset-to-place mapping, or the state from the venue address (QLD, VIC). Gig.swift stopped decoding the timestamps; decode just the offset back if needed."""
 created_at = "2026-11-21T04:56:59.617629Z"
-updated_at = "2026-11-21T04:56:59.617629Z"
+updated_at = "2026-11-21T06:37:27.673569Z"
 tags = [
     "gig-detail",
     "dates",
