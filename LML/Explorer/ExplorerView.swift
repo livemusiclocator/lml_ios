@@ -6,6 +6,9 @@ import SwiftUI
 /// a pin narrows it to that venue's gigs.
 struct ExplorerView: View {
     @State private var model = ExplorerModel()
+    /// The sheet's smallest height: just the grabber and the gig count, leaving
+    /// the rest of the screen to the map.
+    static let collapsed = PresentationDetent.height(64)
     @State private var detent: PresentationDetent = .fraction(0.4)
     @State private var locateRequest = 0
     /// Where the top of the sheet is on screen.
@@ -30,7 +33,7 @@ struct ExplorerView: View {
         .sheet(isPresented: .constant(true)) {
             GigSheet(model: model)
                 .onGeometryChange(for: CGFloat.self) { $0.frame(in: .global).minY } action: { sheetTop = $0 }
-                .presentationDetents([.height(120), .fraction(0.4), .large], selection: $detent)
+                .presentationDetents([Self.collapsed, .fraction(0.4), .large], selection: $detent)
                 .presentationBackgroundInteraction(.enabled(upThrough: .fraction(0.4)))
                 .presentationBackground(Color.night)
                 .interactiveDismissDisabled()
@@ -39,7 +42,7 @@ struct ExplorerView: View {
             await model.load()
         }
         .onChange(of: model.selectedVenueID) { _, id in
-            if id != nil, detent == .height(120) { detent = .fraction(0.4) }
+            if id != nil, detent == Self.collapsed { detent = .fraction(0.4) }
         }
         .onChange(of: model.path.isEmpty) { _, isEmpty in
             withAnimation { detent = isEmpty ? .fraction(0.4) : .large }
