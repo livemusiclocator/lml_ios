@@ -1,5 +1,6 @@
 name = "Filters that work with hundreds of tags"
-status = "todo"
+status = "done"
+owner = "mark"
 description = """
 The website's genre and info filters are awkward: with lots of gigs in view there are hundreds of tags to wade through. The app has no filters yet; work out a better shape before building them.
 
@@ -23,9 +24,13 @@ The website's genre and info filters are awkward: with lots of gigs in view ther
 
 ## Decisions so far
 
-- No venue filter. The website's venue filter list makes an enormous mess; in the app the map does that job: pan to an area to list its gigs, tap a pin for one venue's. Filters are for genre and info tags only."""
+- No venue filter. The website's venue filter list makes an enormous mess; in the app the map does that job: pan to an area to list its gigs, tap a pin for one venue's. Filters are for genre and info tags only.
+- Tidy tags in the app for now (merge case, dashes and spacing; most used spelling, capitalised), and a card for lml_rb to clean them up in the API.
+- Genre chips for the gigs in view (most gigs first, with counts) at the top of the list, and a More chip opening a searchable list of every genre in view.
+- Info toggles: Free, 18+ and All ages (All ages is on 1 gig in a fortnight so far).
+- Two genres show gigs with either. Filters also apply to the map pins and the count."""
 created_at = "2026-11-21T05:02:53.366062Z"
-updated_at = "2026-11-21T05:03:18.490051Z"
+updated_at = "2026-11-21T07:23:09.106521Z"
 tags = [
     "filters",
     "explorer",

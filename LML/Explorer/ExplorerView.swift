@@ -161,6 +161,7 @@ private struct GigSheet: View {
                 .listRowBackground(Color.night)
             }
             .listStyle(.plain)
+            .safeAreaInset(edge: .top, spacing: 0) { FilterBar(model: model) }
             // the first day straight under the count, not a row's height below it
             .listSectionSpacing(0)
             .contentMargins(.top, 0, for: .scrollContent)
@@ -195,6 +196,7 @@ private struct GigSheet: View {
 
     private var emptyMessage: String {
         switch model.showing {
+        case _ where model.isFiltering && !model.gigs.isEmpty: "No gigs here match these filters."
         case .saved: "No saved gigs coming up. Tap ☆ on a gig to save it."
         case let .dates(range) where model.gigs.isEmpty: "No gigs \(range.caption.lowercased())."
         case let .dates(range): "No gigs on this part of the map \(range.caption.lowercased())."

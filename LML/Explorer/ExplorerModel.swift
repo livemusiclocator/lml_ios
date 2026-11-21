@@ -17,6 +17,17 @@ final class ExplorerModel {
     var visibleRegion: MKCoordinateRegion?
     var showing: Showing = .dates(.thisWeek)
     var selectedVenueID: Venue.ID?
+    /// Genres picked in the filter, by `Tags.key`; a gig with any of them shows.
+    var genreFilter: Set<String> = []
+    /// Info toggles that are on; a gig must match them all.
+    var infoFilter: Set<InfoFilter> = []
+
+    var isFiltering: Bool { !genreFilter.isEmpty || !infoFilter.isEmpty }
+
+    func clearFilters() {
+        genreFilter = []
+        infoFilter = []
+    }
     /// The gig pages pushed over the sheet's list.
     var path = NavigationPath()
 
@@ -86,7 +97,31 @@ final class ExplorerModel {
     /// One pin per venue, however many gigs it has.
     var venues: [Venue] {
         var seen = Set<Venue.ID>()
-        return gigs.map(\.venue).filter { $0.coordinate != nil && seen.insert($0.id).inserted }
+        return filteredGigs.map(\.venue).filter { $0.coordinate != nil && seen.insert($0.id).inserted }
+    }
+
+    /// The loaded gigs that pass the filters: what the pins show.
+    var filteredGigs: [Gig] {
+        gigs.filter { matchesInfo($0) && matchesGenre($0) }
+    }
+
+    private func matchesInfo(_ gig: Gig) -> Bool {
+        infoFilter.allSatisfy { $0.matches(gig) }
+    }
+
+    private func matchesGenre(_ gig: Gig) -> Bool {
+        genreFilter.isEmpty || gig.genreTags.contains { genreFilter.contains(Tags.key($0)) }
+    }
+
+    /// The genres to offer: those on the gigs the list would show without a
+    /// genre filter (in view, info toggles applied), most gigs first. Picked
+    /// genres stay offered even when nothing in view has them.
+    var genreOptions: [GenreOption] {
+        let options = Tags.genres(in: listed(gigs.filter(matchesInfo)))
+        let offered = Set(options.map(\.id))
+        let picked = Tags.genres(in: gigs).filter { genreFilter.contains($0.id) && !offered.contains($0.id) }
+            .map { GenreOption(id: $0.id, name: $0.name, count: 0) }
+        return options + picked
     }
 
     var selectedVenue: Venue? {
@@ -96,7 +131,9 @@ final class ExplorerModel {
     /// The gigs the sheet lists: the selected venue's, or those on the part of
     /// the map in view. A venue without coordinates has no pin, so its gigs are
     /// never in view.
-    var shownGigs: [Gig] {
+    var shownGigs: [Gig] { listed(filteredGigs) }
+
+    private func listed(_ gigs: [Gig]) -> [Gig] {
         if let selectedVenueID {
             return gigs.filter { $0.venue.id == selectedVenueID }
         }

@@ -22,7 +22,8 @@ struct Gig: Decodable, Identifiable, Hashable, Sendable {
     let prices: [Price]
 
     var isCancelled: Bool { status == "cancelled" }
-    var isFree: Bool { informationTags.contains { $0.lowercased() == "free" } }
+    /// "Free", "free", "Free entry"... (see `InfoFilter`).
+    var isFree: Bool { InfoFilter.free.matches(self) }
 
     var ticketStatusLabel: String? {
         switch ticketStatus {
